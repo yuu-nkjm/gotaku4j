@@ -1,2 +1,3 @@
-# gotaku
-5taku
+# Gotaku4j
+https://scrapbox.io/gotaku4j
+

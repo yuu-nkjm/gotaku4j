@@ -1,0 +1,146 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.nkjmlab</groupId>
+  <artifactId>gotaku4j-parent</artifactId>
+  <version>0.9.0</version>
+  <packaging>pom</packaging>
+  <url>https://maven.nkjmlab.org/</url>
+
+  <properties>
+    <gotaku4j-version>${project.version}</gotaku4j-version>
+    <junit-version>5.3.2</junit-version>
+    <log4j-version>2.14.1</log4j-version>
+    <assertj-version>3.19.0</assertj-version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <failOnMissingWebXml>false</failOnMissingWebXml>
+    <additionalparam>-Xdoclint:none</additionalparam>
+    <downloadSources>true</downloadSources>
+    <downloadJavadocs>true</downloadJavadocs>
+  </properties>
+
+  <scm>
+    <connection>scm:git:git@github.com:yuu-nkjmb/gotaku4j.git</connection>
+    <url>https://github.com/yuu-nkjm/gotaku4j</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <repositories>
+    <repository>
+      <id>nkjmlab-maven-public</id>
+      <name>nkjmlab Public Maven Repository</name>
+      <url>https://maven.nkjmlab.org/repository/maven-public/</url>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </releases>
+    </repository>
+    <repository>
+      <id>google-maven-central</id>
+      <name>Google Maven Central</name>
+      <url>https://maven-central.storage.googleapis.com</url>
+    </repository>
+  </repositories>
+  <distributionManagement>
+    <repository>
+      <id>nkjmlab-maven-releases</id>
+      <url>https://maven.nkjmlab.org/repository/maven-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>nkjmlab-maven-snapshots</id>
+      <url>https://maven.nkjmlab.org/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <modules>
+    <module>gotaku4j-webui</module>
+    <module>gotaku4j-gotakudos-converter</module>
+  </modules>
+  <dependencies>
+    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>${log4j-version}</version>
+      <optional>true</optional>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj-version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+        <configuration>
+          <compilerVersion>11</compilerVersion>
+          <source>11</source>
+          <target>11</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <!-- ********** for Deployment to remote mvn server START ******* -->
+      <!-- from https://central.sonatype.org/pages/apache-maven.html#javadoc-and-sources-attachments -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.7</version>
+        <extensions>true</extensions>
+      </plugin>
+      <!-- ********** for Deployment to remote mvn server END ******* -->
+    </plugins>
+  </build>
+</project>
+

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="ja">
+
+<head>
+<object th:include="/fragments/head.html::meta-fragment" th:remove="tag"></object>
+<title>ごたく</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row bg-dark my-3">
+      <div class="col-12">
+        <div class="float-right text-right">
+          <button class="btn btn-primary btn-sm text-white" id="btn-start-game">はじめる</button>
+        </div>
+      </div>
+    </div>
+    <div id="div-start-ui" class="row" style="display: none">
+      <div class="col-12">
+        <div id="div-book-titles-ui" class="row mb-3">
+          <div class="col-12">
+            <div id="btn-group-book-titles" class=""></div>
+          </div>
+        </div>
+        <div th:include="/fragments/table-ranking.html::fcontent" th:remove="tag"></div>
+      </div>
+    </div>
+    <div id="div-play-ui" class="row" style="display: none">
+      <div class="col-md-7 mincho">
+        <div class="card card-default">
+          <div class="card-header h5 text-center">
+            第<span id="span-stage-quiz-number">0</span>問
+          </div>
+          <div class="card-body">
+            <p id="div-question" class="h4"></p>
+          </div>
+        </div>
+        <div class="card border-white">
+          <div>
+            残り<span id="span-time" class="badge badge-secondary"></span>秒
+          </div>
+          <button id="btn-s-0" class="btn btn-outline-dark btn-lg btn-selection m-2 h3" disabled></button>
+          <button id="btn-s-1" class="btn btn-outline-dark btn-lg btn-selection m-2 h3" disabled></button>
+          <button id="btn-s-2" class="btn btn-outline-dark btn-lg btn-selection m-2 h3" disabled></button>
+          <button id="btn-s-3" class="btn btn-outline-dark btn-lg btn-selection m-2 h3" disabled></button>
+          <button id="btn-s-4" class="btn btn-outline-dark btn-lg btn-selection m-2 h3" disabled></button>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="card card-default mb-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12">
+                <h6>
+                  ステージ <span id="span-stage-number" class="ml-2">1</span>
+                </h6>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="h4">
+                  <div id="div-border-line">
+                    <span id="span-border-line-indicator" class="text-warning">▼</span>
+                  </div>
+                  <div id="div-stage-score" class="text-secondary">■■■■■■■■</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card card-default mb-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-4">
+                <h6>得点</h6>
+                <h6>正答率</h6>
+              </div>
+              <div class="col-8">
+                <h6>
+                  <span id="span-total-score">0</span>点
+                </h6>
+                <h6>
+                  <span id="span-total-ratio">-</span>%
+                </h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card card-default">
+          <div class="card-body">
+            <p>
+              <span id="div-prev-question"></span> <span id="div-jadge"></span>
+            </p>
+            <p>
+              <span id="div-prev-answer"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <audio id="audio-ok" preload="auto">
+    <source src="../audio/se_quizright_1.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="audio-ng" preload="auto">
+    <source src="../audio/se_quizmistake_1.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="audio-next-stage" preload="auto">
+    <source src="../audio/arasuji_13.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="audio-select-book" preload="auto" loop>
+    <source src="../audio/bgm_stagebgm_04_hq.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="audio-show-quiz" preload="auto">
+    <source src="../audio/bgm_coinin_1.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="audio-game-over" preload="auto">
+    <source src="../audio/bgm_gameover_1.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="audio-timer" preload="auto">
+    <source src="../audio/se_te.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="audio-border-line" preload="auto">
+    <source src="../audio/se_pipipi_2.mp3" type="audio/mpeg" />
+  </audio>
+</body>
+
+</html>

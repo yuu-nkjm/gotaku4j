@@ -28,7 +28,6 @@
 
   <properties>
     <failOnMissingWebXml>false</failOnMissingWebXml>
-    <log4j-version>2.14.1</log4j-version>
     <jackson-version>2.12.3</jackson-version>
     <h2-version>1.4.200</h2-version>
     <spark-template-thymeleaf-version>2.7.1</spark-template-thymeleaf-version>

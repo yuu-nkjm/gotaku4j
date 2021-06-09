@@ -40,11 +40,6 @@
         <updatePolicy>always</updatePolicy>
       </releases>
     </repository>
-    <repository>
-      <id>google-maven-central</id>
-      <name>Google Maven Central</name>
-      <url>https://maven-central.storage.googleapis.com</url>
-    </repository>
   </repositories>
   <distributionManagement>
     <repository>
@@ -104,7 +99,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.8.1</version>
         <configuration>
           <compilerVersion>11</compilerVersion>
           <source>11</source>

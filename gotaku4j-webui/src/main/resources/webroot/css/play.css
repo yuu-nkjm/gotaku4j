@@ -1,0 +1,75 @@
+@charset "utf-8";
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+@font-face {
+  font-family: "Yu Gothic";
+  font-weight: 100;
+  src: local("Yu Gothic Medium");
+}
+
+@font-face {
+  font-family: "Yu Gothic";
+  font-weight: 200;
+  src: local("Yu Gothic Medium");
+}
+
+@font-face {
+  font-family: "Yu Gothic";
+  font-weight: 300;
+  src: local("Yu Gothic Medium");
+}
+
+@font-face {
+  font-family: "Yu Gothic";
+  font-weight: 400;
+  src: local("Yu Gothic Medium");
+}
+
+@font-face {
+  font-family: "Yu Gothic";
+  font-weight: bold;
+  src: local("Yu Gothic Bold");
+}
+
+@font-face {
+  font-family: "Yu Mincho";
+  font-weight: 100;
+  src: local("Yu Mincho Medium");
+}
+
+@font-face {
+  font-family: "Yu Mincho";
+  font-weight: 200;
+  src: local("Yu Mincho Medium");
+}
+
+@font-face {
+  font-family: "Yu Mincho";
+  font-weight: 300;
+  src: local("Yu Mincho Medium");
+}
+
+@font-face {
+  font-family: "Yu Mincho";
+  font-weight: 400;
+  src: local("Yu Mincho Medium");
+}
+
+@font-face {
+  font-family: "Yu Mincho";
+  font-weight: bold;
+  src: local("Yu Mincho Bold");
+}
+
+.mincho {
+  font-family: 'Noto Serif JP', serif;
+}
+
+/*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+html {
+  font-family: sans-serif;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+

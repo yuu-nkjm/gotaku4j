@@ -29,7 +29,7 @@ public class WebsoketSessionsTable {
 
   public WebsoketSessionsTable(Sorm client) {
     this.sorm = client;
-    this.schema = new TableSchema.Builder().setTableName(TABLE_NAME)
+    this.schema = TableSchema.builder().setTableName(TABLE_NAME)
         .addColumnDefinition(SESSION_ID, TableSchemaKeyword.INT, TableSchemaKeyword.PRIMARY_KEY)
         .addColumnDefinition(USER_ID, TableSchemaKeyword.VARCHAR)
         .addColumnDefinition(GAME_ID, TableSchemaKeyword.VARCHAR)

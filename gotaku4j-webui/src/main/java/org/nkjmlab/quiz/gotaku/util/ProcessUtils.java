@@ -47,13 +47,13 @@ public class ProcessUtils {
 
       if (isWindowsOs()) {
         return Arrays.stream(lines.split(System.lineSeparator()))
-            .filter(l -> l.contains(":" + port + "\s")).findAny().map(l -> {
-              String[] t = l.split("\s");
+            .filter(l -> l.contains(":" + port + " ")).findAny().map(l -> {
+              String[] t = l.split("\\s");
               return t[t.length - 1];
             });
       } else {
         return Arrays.stream(lines.split(System.lineSeparator())).findAny()
-            .map(l -> l.split("\s")[1]);
+            .map(l -> l.split("\\s")[1]);
       }
     } catch (Exception e) {
       throw Try.rethrow(e);

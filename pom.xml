@@ -133,6 +133,10 @@
         <artifactId>nexus-staging-maven-plugin</artifactId>
         <version>1.6.7</version>
         <extensions>true</extensions>
+        <configuration>
+          <serverId>nkjmlab-maven-releases</serverId>
+          <nexusUrl>https://maven.nkjmlab.org/repository/maven-releases/</nexusUrl>
+        </configuration>
       </plugin>
       <!-- ********** for Deployment to remote mvn server END ******* -->
     </plugins>

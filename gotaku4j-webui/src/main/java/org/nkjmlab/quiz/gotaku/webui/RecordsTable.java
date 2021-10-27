@@ -19,7 +19,7 @@ public class RecordsTable {
   public RecordsTable(DataSource dataSorce) {
     this.sorm = Sorm.create(dataSorce);
     this.schema =
-        TableSchema.newBuilder(TABLE_NAME).addColumnDefinition(ID, INT, AUTO_INCREMENT, PRIMARY_KEY)
+        TableSchema.builder(TABLE_NAME).addColumnDefinition(ID, INT, AUTO_INCREMENT, PRIMARY_KEY)
             .addColumnDefinition(NAME, VARCHAR).addColumnDefinition(TOTAL_QUIZ_NUMBER, INT)
             .addColumnDefinition(TOTAL_CORRECT_ANSWERS, INT).addColumnDefinition(TOTAL_SCORE, INT)
             .build();

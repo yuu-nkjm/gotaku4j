@@ -10,6 +10,7 @@ import org.nkjmlab.quiz.gotaku.util.ResourceUtils;
 import org.nkjmlab.quiz.gotaku.webui.util.TemplateEngineBuilder;
 import org.nkjmlab.quiz.gotaku.webui.util.ViewModel;
 import io.javalin.Javalin;
+import io.javalin.http.staticfiles.Location;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 
 public class GotakuApplication {
@@ -49,9 +50,8 @@ public class GotakuApplication {
         .setTtlMs(THYMELEAF_EXPIRE_TIME_MILLI_SECOND).build());
 
     Javalin app = Javalin.create(config -> {
-      config.addStaticFiles(WEB_ROOT_DIR_NAME);
+      config.addStaticFiles(WEB_ROOT_DIR_NAME, Location.CLASSPATH);
       config.autogenerateEtags = true;
-      config.precompressStaticFiles = true;
       config.enableCorsForAllOrigins();
     });
 
@@ -69,8 +69,9 @@ public class GotakuApplication {
       ctx.redirect("/app/index.html");
     });
 
-    app.get("/app/*", ctx -> {
-      String pageName = ctx.splats().size() == 0 ? "index.html" : ctx.splat(0);
+    app.get("/app/{pageName}", ctx -> {
+      String pageName =
+          ctx.pathParam("pageName") == null ? "index.html" : ctx.pathParam("pageName");
       ctx.render(pageName, createDefaultModel());
     });
 

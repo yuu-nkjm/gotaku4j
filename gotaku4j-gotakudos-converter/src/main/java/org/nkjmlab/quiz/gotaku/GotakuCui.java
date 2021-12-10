@@ -5,7 +5,7 @@ import org.nkjmlab.quiz.gotaku.gotakudos.GotakuFileConverter;
 import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuiz;
 import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuizBook;
 import org.nkjmlab.quiz.gotaku.gotakudos.QuizResource;
-import org.nkjmlab.quiz.gotaku.util.ResourceUtils;
+import org.nkjmlab.util.java.lang.ResourceUtils;
 
 public class GotakuCui {
 

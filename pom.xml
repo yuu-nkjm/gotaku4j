@@ -1,24 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.nkjmlab</groupId>
   <artifactId>gotaku4j-parent</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1</version>
   <packaging>pom</packaging>
   <url>https://maven.nkjmlab.org/</url>
-
-  <properties>
-    <gotaku4j-version>${project.version}</gotaku4j-version>
-    <junit-version>5.3.2</junit-version>
-    <log4j-version>2.14.1</log4j-version>
-    <assertj-version>3.19.0</assertj-version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <failOnMissingWebXml>false</failOnMissingWebXml>
-    <additionalparam>-Xdoclint:none</additionalparam>
-    <downloadSources>true</downloadSources>
-    <downloadJavadocs>true</downloadJavadocs>
-  </properties>
 
   <scm>
     <connection>scm:git:git@github.com:yuu-nkjmb/gotaku4j.git</connection>
@@ -41,47 +27,62 @@
       </releases>
     </repository>
   </repositories>
-  <distributionManagement>
-    <repository>
-      <id>nkjmlab-maven-releases</id>
-      <url>https://maven.nkjmlab.org/repository/maven-releases/</url>
-    </repository>
-    <snapshotRepository>
-      <id>nkjmlab-maven-snapshots</id>
-      <url>https://maven.nkjmlab.org/repository/maven-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <modules>
     <module>gotaku4j-webui</module>
     <module>gotaku4j-gotakudos-converter</module>
   </modules>
+  <properties>
+    <gotaku4j-version>${project.version}</gotaku4j-version>
+    <nkjmlab-utils-version>0.1.4</nkjmlab-utils-version>
+    <sorm-version>1.4.0-rc4</sorm-version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <additionalparam>-Xdoclint:none</additionalparam>
+    <downloadSources>true</downloadSources>
+    <downloadJavadocs>true</downloadJavadocs>
+  </properties>
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+    <!-- https://mvnrepository.com/artifact/org.nkjmlab/nkjmlab-utils-core -->
+    <dependency>
+      <groupId>org.nkjmlab</groupId>
+      <artifactId>nkjmlab-utils-core</artifactId>
+      <version>${nkjmlab-utils-version}</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.nkjmlab/sorm4j -->
+    <dependency>
+      <groupId>org.nkjmlab</groupId>
+      <artifactId>sorm4j</artifactId>
+      <version>${sorm-version}</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>2.0.202</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.13.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <version>${log4j-version}</version>
-      <optional>true</optional>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>2.14.1</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit-version}</version>
-      <scope>test</scope>
-    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit-version}</version>
+      <version>5.8.2</version>
       <scope>test</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>${assertj-version}</version>
+      <version>3.21.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -101,10 +102,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <compilerVersion>11</compilerVersion>
-          <source>11</source>
-          <target>11</target>
-          <encoding>UTF-8</encoding>
+          <release>11</release>
         </configuration>
       </plugin>
       <!-- ********** for Deployment to remote mvn server START ******* -->
@@ -131,15 +129,13 @@
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.7</version>
+        <version>1.6.8</version>
         <extensions>true</extensions>
         <configuration>
-          <serverId>nkjmlab-maven-releases</serverId>
+          <serverId>maven-releases</serverId>
           <nexusUrl>https://maven.nkjmlab.org/repository/maven-releases/</nexusUrl>
         </configuration>
       </plugin>
-      <!-- ********** for Deployment to remote mvn server END ******* -->
     </plugins>
   </build>
 </project>
-

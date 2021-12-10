@@ -2,13 +2,13 @@ package org.nkjmlab.quiz.gotaku.webui;
 
 import java.io.File;
 import javax.sql.DataSource;
-import org.h2.jdbcx.JdbcConnectionPool;
-import org.nkjmlab.quiz.gotaku.util.FileDbConfig;
-import org.nkjmlab.quiz.gotaku.util.JacksonUtils;
-import org.nkjmlab.quiz.gotaku.util.ProcessUtils;
-import org.nkjmlab.quiz.gotaku.util.ResourceUtils;
 import org.nkjmlab.quiz.gotaku.webui.util.TemplateEngineBuilder;
 import org.nkjmlab.quiz.gotaku.webui.util.ViewModel;
+import org.nkjmlab.util.h2.LocalDataSourceFactory;
+import org.nkjmlab.util.jackson.JacksonMapper;
+import org.nkjmlab.util.java.json.FileDatabaseConfigJson;
+import org.nkjmlab.util.java.lang.ProcessUtils;
+import org.nkjmlab.util.java.lang.ResourceUtils;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
@@ -34,12 +34,12 @@ public class GotakuApplication {
   }
 
   public GotakuApplication() {
-    FileDbConfig conf =
-        JacksonUtils.readValue(ResourceUtils.getFile("/h2.conf"), FileDbConfig.class);
+    FileDatabaseConfigJson conf = JacksonMapper.getDefaultMapper()
+        .toObject(ResourceUtils.getFile("/h2.conf"), FileDatabaseConfigJson.Builder.class).build();
+    LocalDataSourceFactory factory = LocalDataSourceFactory.builder(conf).build();
     log.info("{}", conf);
-    log.info("jdbcUrl=[{}]", conf.toJdbcUrl());
-    this.dataSourceForFileDb =
-        JdbcConnectionPool.create(conf.toJdbcUrl(), conf.getUsername(), conf.getPassword());
+    log.info("factory=[{}]", factory);
+    this.dataSourceForFileDb = factory.createMixedModeDataSource();
     this.app = createJavalin();
 
   }

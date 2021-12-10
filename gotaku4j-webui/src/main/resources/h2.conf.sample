@@ -1,6 +1,6 @@
 {
 	"username":"sa",
 	"password":"yourpassword",
-	"dbDir":"~/h2-db/gotaku",
-	"dbName":"gotaku"
+  "databaseDirectory":"~/h2db/gotaku",
+  "databaseName":"gotaku"
 }

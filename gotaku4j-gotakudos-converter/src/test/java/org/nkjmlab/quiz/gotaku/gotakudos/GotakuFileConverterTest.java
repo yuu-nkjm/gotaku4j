@@ -5,7 +5,7 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import org.nkjmlab.quiz.gotaku.util.ResourceUtils;
+import org.nkjmlab.util.java.lang.ResourceUtils;
 
 class GotakuFileConverterTest {
 

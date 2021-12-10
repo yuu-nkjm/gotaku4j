@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Set;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.Test;
-import org.nkjmlab.quiz.gotaku.util.ResourceUtils;
 import org.nkjmlab.sorm4j.Sorm;
+import org.nkjmlab.util.java.lang.ResourceUtils;
 
 class QuizTableTest {
 
@@ -18,7 +18,7 @@ class QuizTableTest {
     GotakuQuizBook book = new GotakuFileConverter().parse(_5tqDir);
 
     DataSource dataSorce =
-        Sorm.createDriverManagerDataSource("jdbc:h2:mem:gotaku;DB_CLOSE_DELAY=-1", "sa", "");
+        Sorm.createDataSource("jdbc:h2:mem:gotaku;DB_CLOSE_DELAY=-1", "sa", "");
     QuizTable quizTable = new QuizTable(dataSorce);
     quizTable.createTableAndIndexesIfNotExists();
     quizTable.insert(book);

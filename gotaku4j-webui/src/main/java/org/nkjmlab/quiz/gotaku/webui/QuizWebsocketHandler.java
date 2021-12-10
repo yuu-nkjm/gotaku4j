@@ -1,6 +1,5 @@
 package org.nkjmlab.quiz.gotaku.webui;
 
-import static org.nkjmlab.quiz.gotaku.util.JacksonUtils.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -16,9 +15,9 @@ import org.nkjmlab.quiz.gotaku.gotakudos.GotakuFileConverter;
 import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuiz;
 import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuizBook;
 import org.nkjmlab.quiz.gotaku.gotakudos.QuizResource;
-import org.nkjmlab.quiz.gotaku.util.JacksonUtils;
-import org.nkjmlab.quiz.gotaku.util.ResourceUtils;
-import org.nkjmlab.quiz.gotaku.util.Try;
+import org.nkjmlab.util.jackson.JacksonMapper;
+import org.nkjmlab.util.java.function.Try;
+import org.nkjmlab.util.java.lang.ResourceUtils;
 
 public class QuizWebsocketHandler {
 
@@ -30,7 +29,7 @@ public class QuizWebsocketHandler {
 
 
   private static final Map<String, GotakuQuizBook> gotakuQuizBooks = new GotakuFileConverter()
-      .parseAll(Try.getOrThrow(() -> ResourceUtils.getFile("/quizbooks/5tq/"), Try::rethrow));
+      .parseAll(Try.getOrElseThrow(() -> ResourceUtils.getFile("/quizbooks/5tq/"), Try::rethrow));
 
   private static final Map<String, QuizWebsocketHandler> instances = new ConcurrentHashMap<>();
 
@@ -43,7 +42,7 @@ public class QuizWebsocketHandler {
 
 
   public void onMessage(Session session, String text, RecordsTable recordsTable) {
-    JsonMessage json = JacksonUtils.readValue(text, JsonMessage.class);
+    JsonMessage json = JacksonMapper.getDefaultMapper().toObject(text, JsonMessage.class);
 
     log.debug("{}", json);
     switch (json.method) {
@@ -93,12 +92,14 @@ public class QuizWebsocketHandler {
   }
 
   private void sendBookTitles(Session session, List<String> titles) {
-    sendText(session, writeValue(new JsonMessage(JsonMessage.BOOK_TITLES, new Object[] {titles})));
+    sendText(session, JacksonMapper.getDefaultMapper()
+        .toJson(new JsonMessage(JsonMessage.BOOK_TITLES, new Object[] {titles})));
   }
 
 
   private static void sendQuiz(Session session, GotakuQuiz gotakuQuiz) {
-    sendText(session, writeValue(new JsonMessage(JsonMessage.QUIZ, new Object[] {gotakuQuiz})));
+    sendText(session, JacksonMapper.getDefaultMapper()
+        .toJson(new JsonMessage(JsonMessage.QUIZ, new Object[] {gotakuQuiz})));
   }
 
   private static void sendText(Session session, String text) {

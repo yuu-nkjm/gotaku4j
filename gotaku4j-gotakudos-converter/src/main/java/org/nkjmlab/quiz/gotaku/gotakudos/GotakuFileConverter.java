@@ -15,9 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.nkjmlab.quiz.gotaku.util.HexUtils;
-import org.nkjmlab.quiz.gotaku.util.JacksonUtils;
-import org.nkjmlab.quiz.gotaku.util.Try;
-import com.fasterxml.jackson.core.type.TypeReference;
+import org.nkjmlab.util.jackson.JacksonMapper;
+import org.nkjmlab.util.java.function.Try;
 
 
 /**
@@ -137,7 +136,7 @@ public class GotakuFileConverter {
 
   public GotakuQuizBook parse(File _5tqDir) {
     String bookName = _5tqDir.getName();
-    List<String> toc = Try.getOrDefault(() -> {
+    List<String> toc = Try.getOrElse(() -> {
       File tocFile = new File(_5tqDir, "toc.txt");
       return tocFile.exists() ? Files.readAllLines(tocFile.toPath()) : Collections.emptyList();
     }, Collections.emptyList());
@@ -145,15 +144,15 @@ public class GotakuFileConverter {
         .filter(fileInSubDir -> fileInSubDir.getName().toLowerCase().endsWith(".5tq")).findFirst()
         .get();
 
-    Map<String, String> gaijiMap = Try.getOrDefault(() -> {
+    Map<String, Object> gaijiMap = Try.getOrElse(() -> {
       File gaijiFile = new File(_5tqDir, "gaiji.json");
-      return gaijiFile.exists()
-          ? JacksonUtils.readValue(gaijiFile, new TypeReference<Map<String, String>>() {})
+      return gaijiFile.exists() ? JacksonMapper.getDefaultMapper().toMap(gaijiFile)
           : Collections.emptyMap();
     }, Collections.emptyMap());
 
 
-    return parse(bookName, toc, _5tqFile, gaijiMap);
+    return parse(bookName, toc, _5tqFile, gaijiMap.entrySet().stream()
+        .collect(Collectors.toMap(en -> en.getKey(), en -> en.getValue().toString())));
   }
 
   /**
@@ -219,7 +218,7 @@ public class GotakuFileConverter {
 
   private String readDoubleByteAsStringAndTrimWithMask(FileInputStream is, int length,
       Map<String, String> gaijiMap) {
-    return Try.getOrThrow(() -> {
+    return Try.getOrElseThrow(() -> {
       byte[] srcBytes = is.readNBytes(length);
 
       StringBuilder buff = new StringBuilder(length / 2);
@@ -263,12 +262,12 @@ public class GotakuFileConverter {
 
 
   private static String readDoubleByteAsStringAndTrim(FileInputStream is, int length) {
-    return Try.getOrThrow(() -> new String(is.readNBytes(length), FROM_ENCODE).trim(),
+    return Try.getOrElseThrow(() -> new String(is.readNBytes(length), FROM_ENCODE).trim(),
         Try::rethrow);
   }
 
   private static short readAsShort(FileInputStream is) {
-    return Try.getOrThrow(() -> {
+    return Try.getOrElseThrow(() -> {
       ByteBuffer bb = ByteBuffer.allocate(2);
       bb.order(ByteOrder.LITTLE_ENDIAN);
       bb.put(is.readNBytes(2));

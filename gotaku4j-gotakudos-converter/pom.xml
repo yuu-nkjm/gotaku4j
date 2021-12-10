@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>gotaku4j-gotakudos-converter</artifactId>
   <description>Gotaku converter for Java</description>
@@ -8,47 +6,6 @@
   <parent>
     <groupId>org.nkjmlab</groupId>
     <artifactId>gotaku4j-parent</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.1</version>
   </parent>
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-    </license>
-  </licenses>
-  <developers>
-    <developer>
-      <name>Yuu Nakajima</name>
-      <email>yuu.nkjm.pub@gmail.com</email>
-      <organization>nkjmlab.org</organization>
-      <organizationUrl>https://github.com/nkjmlab</organizationUrl>
-    </developer>
-  </developers>
-
-  <properties>
-    <h2-version>1.4.200</h2-version>
-    <jackson-version>2.12.3</jackson-version>
-  </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.nkjmlab</groupId>
-      <artifactId>sorm4j</artifactId>
-      <version>[1.0.0,)</version>
-      <optional>true</optional>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>${h2-version}</version>
-      <optional>true</optional>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson-version}</version>
-    </dependency>
-  </dependencies>
 </project>

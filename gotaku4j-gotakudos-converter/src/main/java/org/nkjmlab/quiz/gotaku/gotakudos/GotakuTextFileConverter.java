@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.nkjmlab.quiz.gotaku.util.Try;
+import org.nkjmlab.util.java.function.Try;
 
 public class GotakuTextFileConverter {
 

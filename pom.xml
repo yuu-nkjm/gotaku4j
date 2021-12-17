@@ -12,6 +12,7 @@
     <tag>HEAD</tag>
   </scm>
 
+
   <repositories>
     <repository>
       <id>nkjmlab-maven-public</id>
@@ -31,15 +32,18 @@
     <module>gotaku4j-webui</module>
     <module>gotaku4j-gotakudos-converter</module>
   </modules>
+
   <properties>
     <gotaku4j-version>${project.version}</gotaku4j-version>
-    <nkjmlab-utils-version>0.1.4</nkjmlab-utils-version>
-    <sorm-version>1.4.0-rc4</sorm-version>
+    <nkjmlab-utils-version>0.1.6</nkjmlab-utils-version>
+    <sorm-version>1.4.0-rc6</sorm-version>
+    <xstream-version-in-plugin>1.4.15</xstream-version-in-plugin>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <additionalparam>-Xdoclint:none</additionalparam>
     <downloadSources>true</downloadSources>
     <downloadJavadocs>true</downloadJavadocs>
   </properties>
+
   <dependencies>
     <!-- https://mvnrepository.com/artifact/org.nkjmlab/nkjmlab-utils-core -->
     <dependency>
@@ -69,7 +73,7 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
-      <version>2.14.1</version>
+      <version>2.16.0</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
     <dependency>
@@ -125,16 +129,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.8</version>
-        <extensions>true</extensions>
-        <configuration>
-          <serverId>maven-releases</serverId>
-          <nexusUrl>https://maven.nkjmlab.org/repository/maven-releases/</nexusUrl>
-        </configuration>
       </plugin>
     </plugins>
   </build>

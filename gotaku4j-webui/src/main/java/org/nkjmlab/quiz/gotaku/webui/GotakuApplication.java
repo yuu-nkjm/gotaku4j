@@ -4,7 +4,7 @@ import java.io.File;
 import javax.sql.DataSource;
 import org.nkjmlab.quiz.gotaku.webui.util.TemplateEngineBuilder;
 import org.nkjmlab.quiz.gotaku.webui.util.ViewModel;
-import org.nkjmlab.util.h2.LocalDataSourceFactory;
+import org.nkjmlab.util.h2.H2LocalDataSourceFactory;
 import org.nkjmlab.util.jackson.JacksonMapper;
 import org.nkjmlab.util.java.json.FileDatabaseConfigJson;
 import org.nkjmlab.util.java.lang.ProcessUtils;
@@ -36,7 +36,7 @@ public class GotakuApplication {
   public GotakuApplication() {
     FileDatabaseConfigJson conf = JacksonMapper.getDefaultMapper()
         .toObject(ResourceUtils.getFile("/h2.conf"), FileDatabaseConfigJson.Builder.class).build();
-    LocalDataSourceFactory factory = LocalDataSourceFactory.builder(conf).build();
+    H2LocalDataSourceFactory factory = H2LocalDataSourceFactory.builder(conf).build();
     log.info("{}", conf);
     log.info("factory=[{}]", factory);
     this.dataSourceForFileDb = factory.createMixedModeDataSource();

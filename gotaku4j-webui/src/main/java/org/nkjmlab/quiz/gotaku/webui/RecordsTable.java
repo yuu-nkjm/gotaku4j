@@ -1,6 +1,6 @@
 package org.nkjmlab.quiz.gotaku.webui;
 
-import static org.nkjmlab.sorm4j.sql.schema.TableSchemaKeyword.*;
+import static org.nkjmlab.sorm4j.sql.schema.TableSchema.Keyword.*;
 import javax.sql.DataSource;
 import org.nkjmlab.sorm4j.Sorm;
 import org.nkjmlab.sorm4j.sql.schema.TableSchema;

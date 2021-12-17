@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jetty.websocket.api.Session;
 import org.nkjmlab.sorm4j.Sorm;
 import org.nkjmlab.sorm4j.sql.schema.TableSchema;
-import org.nkjmlab.sorm4j.sql.schema.TableSchemaKeyword;
+import org.nkjmlab.sorm4j.sql.schema.TableSchema.Keyword;
 
 public class WebsoketSessionsTable {
   private static final org.slf4j.Logger log =
@@ -30,11 +30,9 @@ public class WebsoketSessionsTable {
   public WebsoketSessionsTable(Sorm client) {
     this.sorm = client;
     this.schema = TableSchema.builder().setTableName(TABLE_NAME)
-        .addColumnDefinition(SESSION_ID, TableSchemaKeyword.INT, TableSchemaKeyword.PRIMARY_KEY)
-        .addColumnDefinition(USER_ID, TableSchemaKeyword.VARCHAR)
-        .addColumnDefinition(GAME_ID, TableSchemaKeyword.VARCHAR)
-        .addColumnDefinition(CREATED_AT, TableSchemaKeyword.TIMESTAMP).addIndexColumn(GAME_ID)
-        .build();
+        .addColumnDefinition(SESSION_ID, Keyword.INT, Keyword.PRIMARY_KEY)
+        .addColumnDefinition(USER_ID, Keyword.VARCHAR).addColumnDefinition(GAME_ID, Keyword.VARCHAR)
+        .addColumnDefinition(CREATED_AT, Keyword.TIMESTAMP).addIndexDefinition(GAME_ID).build();
   }
 
 

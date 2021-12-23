@@ -35,8 +35,8 @@
 
   <properties>
     <gotaku4j-version>${project.version}</gotaku4j-version>
-    <nkjmlab-utils-version>0.1.6</nkjmlab-utils-version>
-    <sorm-version>1.4.0-rc6</sorm-version>
+    <nkjmlab-utils-version>0.1.7</nkjmlab-utils-version>
+    <sorm-version>1.4.0-rc7</sorm-version>
     <xstream-version-in-plugin>1.4.15</xstream-version-in-plugin>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <additionalparam>-Xdoclint:none</additionalparam>
@@ -73,7 +73,7 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
-      <version>2.16.0</version>
+      <version>2.17.0</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
     <dependency>

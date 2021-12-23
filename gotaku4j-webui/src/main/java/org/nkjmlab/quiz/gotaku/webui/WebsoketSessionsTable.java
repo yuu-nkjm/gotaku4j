@@ -1,14 +1,13 @@
 package org.nkjmlab.quiz.gotaku.webui;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jetty.websocket.api.Session;
 import org.nkjmlab.sorm4j.Sorm;
-import org.nkjmlab.sorm4j.sql.schema.TableSchema;
-import org.nkjmlab.sorm4j.sql.schema.TableSchema.Keyword;
+import org.nkjmlab.sorm4j.table.TableSchema;
+import org.nkjmlab.sorm4j.table.TableSchema.Keyword;
 
 public class WebsoketSessionsTable {
   private static final org.slf4j.Logger log =
@@ -82,7 +81,6 @@ public class WebsoketSessionsTable {
     private int sessionId;
     private String gameId;
     private String userId;
-    private Date createdAt = new Date();
 
     public WebSocketSession() {}
 

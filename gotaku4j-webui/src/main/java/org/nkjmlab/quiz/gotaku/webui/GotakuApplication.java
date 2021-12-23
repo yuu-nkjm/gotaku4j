@@ -45,7 +45,7 @@ public class GotakuApplication {
   }
 
   private Javalin createJavalin() {
-    RecordsTable recordsTable = new RecordsTable(dataSourceForFileDb);
+    QuizRecordsTable recordsTable = new QuizRecordsTable(dataSourceForFileDb);
     JavalinThymeleaf.configure(new TemplateEngineBuilder().setPrefix("/templates/")
         .setTtlMs(THYMELEAF_EXPIRE_TIME_MILLI_SECOND).build());
 

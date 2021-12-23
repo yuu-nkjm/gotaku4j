@@ -1,12 +1,12 @@
 package org.nkjmlab.quiz.gotaku.gotakudos;
 
-import static org.nkjmlab.sorm4j.sql.schema.TableSchema.Keyword.*;
+import static org.nkjmlab.sorm4j.table.TableSchema.Keyword.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import org.nkjmlab.sorm4j.Sorm;
-import org.nkjmlab.sorm4j.sql.schema.TableSchema;
-import org.nkjmlab.sorm4j.sql.schema.TableSchema.Keyword;
+import org.nkjmlab.sorm4j.table.TableSchema;
+import org.nkjmlab.sorm4j.table.TableSchema.Keyword;
 
 public class QuizTable {
 

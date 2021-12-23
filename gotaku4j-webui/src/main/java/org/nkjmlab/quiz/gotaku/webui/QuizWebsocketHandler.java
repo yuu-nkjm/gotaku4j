@@ -15,6 +15,7 @@ import org.nkjmlab.quiz.gotaku.gotakudos.GotakuFileConverter;
 import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuiz;
 import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuizBook;
 import org.nkjmlab.quiz.gotaku.gotakudos.QuizResource;
+import org.nkjmlab.quiz.gotaku.webui.QuizRecordsTable.QuizRecord;
 import org.nkjmlab.util.jackson.JacksonMapper;
 import org.nkjmlab.util.java.function.Try;
 import org.nkjmlab.util.java.lang.ResourceUtils;
@@ -41,7 +42,7 @@ public class QuizWebsocketHandler {
 
 
 
-  public void onMessage(Session session, String text, RecordsTable recordsTable) {
+  public void onMessage(Session session, String text, QuizRecordsTable recordsTable) {
     JsonMessage json = JacksonMapper.getDefaultMapper().toObject(text, JsonMessage.class);
 
     log.debug("{}", json);
@@ -66,8 +67,8 @@ public class QuizWebsocketHandler {
         return;
       case JsonMessage.SEND_RECORD: {
         Object[] parameters = json.parameters;
-        recordsTable.insert((String) parameters[0], (int) parameters[1], (int) parameters[2],
-            (int) parameters[3]);
+        recordsTable.insert(new QuizRecord((String) parameters[0], (int) parameters[1],
+            (int) parameters[2], (int) parameters[3]));
         return;
       }
       default:
@@ -150,7 +151,6 @@ public class QuizWebsocketHandler {
     public String method;
     public Object[] parameters;
 
-    public JsonMessage() {}
 
     public JsonMessage(String method, Object[] parameters) {
       this.method = method;

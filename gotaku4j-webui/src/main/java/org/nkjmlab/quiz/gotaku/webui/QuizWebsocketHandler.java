@@ -67,7 +67,7 @@ public class QuizWebsocketHandler {
         return;
       case JsonMessage.SEND_RECORD: {
         Object[] parameters = json.parameters;
-        recordsTable.insert(new QuizRecord((String) parameters[0], (int) parameters[1],
+        recordsTable.insertIn(new QuizRecord((String) parameters[0], (int) parameters[1],
             (int) parameters[2], (int) parameters[3]));
         return;
       }

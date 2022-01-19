@@ -1,13 +1,13 @@
 package org.nkjmlab.quiz.gotaku.webui;
 
+import static org.nkjmlab.sorm4j.util.sql.SqlKeyword.*;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jetty.websocket.api.Session;
 import org.nkjmlab.sorm4j.Sorm;
-import org.nkjmlab.sorm4j.table.TableSchema;
-import org.nkjmlab.sorm4j.table.TableSchema.Keyword;
+import org.nkjmlab.sorm4j.util.table.TableSchema;
 
 public class WebsoketSessionsTable {
   private static final org.slf4j.Logger log =
@@ -28,47 +28,46 @@ public class WebsoketSessionsTable {
 
   public WebsoketSessionsTable(Sorm client) {
     this.sorm = client;
-    this.schema = TableSchema.builder().setTableName(TABLE_NAME)
-        .addColumnDefinition(SESSION_ID, Keyword.INT, Keyword.PRIMARY_KEY)
-        .addColumnDefinition(USER_ID, Keyword.VARCHAR).addColumnDefinition(GAME_ID, Keyword.VARCHAR)
-        .addColumnDefinition(CREATED_AT, Keyword.TIMESTAMP).addIndexDefinition(GAME_ID).build();
+    this.schema = TableSchema.builder(TABLE_NAME).addColumnDefinition(SESSION_ID, INT, PRIMARY_KEY)
+        .addColumnDefinition(USER_ID, VARCHAR).addColumnDefinition(GAME_ID, VARCHAR)
+        .addColumnDefinition(CREATED_AT, TIMESTAMP).addIndexDefinition(GAME_ID).build();
   }
 
 
   public void dropAndCreate() {
-    sorm.accept(client -> {
-      client.executeUpdate(schema.getDropTableIfExistsStatement());
-      client.executeUpdate(schema.getCreateTableIfNotExistsStatement());
+    sorm.acceptHandler(conn -> {
+      conn.executeUpdate(schema.getDropTableIfExistsStatement());
+      conn.executeUpdate(schema.getCreateTableIfNotExistsStatement());
     });
   }
 
 
   void registerSession(String gameId, String userId, Session session) {
-    sorm.accept(client -> {
+    sorm.acceptHandler(conn -> {
       int sessionId = session.hashCode();
       WebsoketSessionsTable.WebSocketSession ws = new WebSocketSession(sessionId, gameId, userId);
-      if (client.exists(ws)) {
+      if (conn.exists(ws)) {
         log.warn("{} already exists.", ws);
         return;
       }
-      client.insert(ws);
+      conn.insert(ws);
       sessions.put(sessionId, session);
       log.info("WebSocket is registered={}", ws);
     });
   }
 
   void updateSession(int sessionId, String gameId, String userId) {
-    sorm.accept(client -> client.update(new WebSocketSession(sessionId, gameId, userId)));
+    sorm.update(new WebSocketSession(sessionId, gameId, userId));
   }
 
   Optional<String> removeSession(Session session) {
     for (Entry<Integer, Session> e : sessions.entrySet()) {
       if (e.getValue().equals(session)) {
         sessions.remove(e.getKey());
-        return sorm.apply(client -> {
+        return sorm.applyHandler(conn -> {
           WebsoketSessionsTable.WebSocketSession gs =
-              client.readByPrimaryKey(WebsoketSessionsTable.WebSocketSession.class, e.getKey());
-          client.delete(gs);
+              conn.selectByPrimaryKey(WebsoketSessionsTable.WebSocketSession.class, e.getKey());
+          conn.delete(gs);
           return Optional.of(gs.getGameId());
         });
       }

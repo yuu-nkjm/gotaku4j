@@ -1,13 +1,13 @@
 package org.nkjmlab.quiz.gotaku.webui;
 
-import static org.nkjmlab.sorm4j.table.TableSchema.Keyword.*;
+import static org.nkjmlab.sorm4j.util.sql.SqlKeyword.*;
 import javax.sql.DataSource;
 import org.nkjmlab.quiz.gotaku.webui.QuizRecordsTable.QuizRecord;
 import org.nkjmlab.sorm4j.Sorm;
-import org.nkjmlab.sorm4j.table.Table;
-import org.nkjmlab.sorm4j.table.TableSchema;
+import org.nkjmlab.sorm4j.util.table.TableWithSchema;
+import org.nkjmlab.sorm4j.util.table.TableSchema;
 
-public class QuizRecordsTable implements Table<QuizRecord> {
+public class QuizRecordsTable implements TableWithSchema<QuizRecord> {
   private static final String TABLE_NAME = "QUIZ_RECORDS";
   private static final String ID = "id";
   private static final String NAME = "name";

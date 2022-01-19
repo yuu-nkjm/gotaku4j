@@ -22,4 +22,11 @@ public class QuizResource {
     return quizeQueue.poll();
   }
 
+  @Override
+  public String toString() {
+    return "QuizResource [gotakuQuizBook name=" + gotakuQuizBook.getBookName()
+        + ", quizeQueue size=" + quizeQueue.size() + "]";
+  }
+
+
 }

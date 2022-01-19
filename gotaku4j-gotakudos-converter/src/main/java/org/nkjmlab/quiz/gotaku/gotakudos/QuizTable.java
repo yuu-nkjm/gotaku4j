@@ -1,12 +1,11 @@
 package org.nkjmlab.quiz.gotaku.gotakudos;
 
-import static org.nkjmlab.sorm4j.table.TableSchema.Keyword.*;
+import static org.nkjmlab.sorm4j.util.sql.SqlKeyword.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import org.nkjmlab.sorm4j.Sorm;
-import org.nkjmlab.sorm4j.table.TableSchema;
-import org.nkjmlab.sorm4j.table.TableSchema.Keyword;
+import org.nkjmlab.sorm4j.util.table.TableSchema;
 
 public class QuizTable {
 
@@ -29,8 +28,8 @@ public class QuizTable {
 
   public QuizTable(DataSource dataSorce) {
     this.sorm = Sorm.create(dataSorce);
-    this.schema = TableSchema.builder().setTableName(TABLE_NAME)
-        .addColumnDefinition(ID, Keyword.INT, Keyword.AUTO_INCREMENT, Keyword.PRIMARY_KEY)
+    this.schema = TableSchema.builder(TABLE_NAME)
+        .addColumnDefinition(ID, INT, AUTO_INCREMENT, PRIMARY_KEY)
         .addColumnDefinition(BOOK_NAME, VARCHAR).addColumnDefinition(BOOK_NAME, VARCHAR)
         .addColumnDefinition(GENRE, VARCHAR).addColumnDefinition(QUESTION, VARCHAR)
         .addColumnDefinition(S1, VARCHAR).addColumnDefinition(S2, VARCHAR)
@@ -39,11 +38,11 @@ public class QuizTable {
   }
 
   public void dropTableIfExists() {
-    sorm.accept(client -> client.executeUpdate(schema.getDropTableIfExistsStatement()));
+    sorm.acceptHandler(client -> client.executeUpdate(schema.getDropTableIfExistsStatement()));
   }
 
   public void createTableAndIndexesIfNotExists() {
-    sorm.accept(client -> {
+    sorm.acceptHandler(client -> {
       client.executeUpdate(schema.getCreateTableIfNotExistsStatement());
       schema.getCreateIndexIfNotExistsStatements()
           .forEach(createIndexStatement -> client.executeUpdate(createIndexStatement));
@@ -52,17 +51,17 @@ public class QuizTable {
 
   public void insert(GotakuQuizBook book) {
     book.getGenres()
-        .forEach(section -> sorm.accept(conn -> conn.insert(section.getQuizzes().stream()
+        .forEach(section -> sorm.acceptHandler(conn -> conn.insert(section.getQuizzes().stream()
             .map(q -> new Quiz(book.getBookName(), section.getGenreName(), q))
             .collect(Collectors.toList()))));
   }
 
   public List<Quiz> readAllQuizzes() {
-    return sorm.apply(conn -> conn.readList(Quiz.class, "select * from " + TABLE_NAME));
+    return sorm.applyHandler(conn -> conn.readList(Quiz.class, "select * from " + TABLE_NAME));
   }
 
   public List<String> readAllGenreNames() {
-    return sorm.apply(
+    return sorm.applyHandler(
         conn -> conn.readList(String.class, "select distinct " + GENRE + " from " + TABLE_NAME));
   }
 

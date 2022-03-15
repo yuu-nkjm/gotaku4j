@@ -62,14 +62,23 @@
   src: local("Yu Mincho Bold");
 }
 
+/**
 .mincho {
   font-family: 'Noto Serif JP', serif;
 }
+**/
 
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
-html {
-  font-family: sans-serif;
+body {
+  font-family: 'UD デジタル 教科書体 N-B', 'ヒラギノ角ゴシック体 W4', sans-serif;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
+}
+
+:focus{
+  outline: none;
+  box-shadow: none;
+  border: 3px solid #007bff;
+  background-color: #f0f0f0;
 }
 

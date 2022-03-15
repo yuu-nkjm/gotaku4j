@@ -22,17 +22,20 @@ import org.nkjmlab.util.java.lang.ResourceUtils;
 
 public class QuizWebsocketHandler {
 
-  private static final org.slf4j.Logger log =
-      org.slf4j.LoggerFactory.getLogger(QuizWebsocketHandler.class);
+  private static final org.apache.logging.log4j.Logger log =
+      org.apache.logging.log4j.LogManager.getLogger();
 
   private static final ExecutorService srv =
       Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors(), 2));
 
 
-  private static final Map<String, GotakuQuizBook> gotakuQuizBooks = new GotakuFileConverter()
-      .parseAll(Try.getOrElseThrow(() -> ResourceUtils.getFile("/quizbooks/5tq/"), Try::rethrow));
+  private static final Map<String, GotakuQuizBook> gotakuQuizBooks =
+      new GotakuFileConverter().parseAll(Try
+          .getOrElseThrow(() -> ResourceUtils.getResourceAsFile("/quizbooks/5tq/"), Try::rethrow));
 
   private static final Map<String, QuizWebsocketHandler> instances = new ConcurrentHashMap<>();
+  private static final JacksonMapper mapper = JacksonMapper.getDefaultMapper();
+
 
   private QuizResource quizResource;
 
@@ -43,7 +46,7 @@ public class QuizWebsocketHandler {
 
 
   public void onMessage(Session session, String text, QuizRecordsTable recordsTable) {
-    JsonMessage json = JacksonMapper.getDefaultMapper().toObject(text, JsonMessage.class);
+    JsonMessage json = mapper.toObject(text, JsonMessage.class);
 
     log.debug("{}", json);
     switch (json.method) {
@@ -53,21 +56,17 @@ public class QuizWebsocketHandler {
         return;
       case JsonMessage.START_BOOK:
         this.quizResource = new QuizResource(gotakuQuizBooks.get(json.parameters[0]));
-        // logger.debug("[{}] is set", quizResource.getBookName());
         return;
       case JsonMessage.START_STAGE:
-        return;
       case JsonMessage.FINISH_STAGE:
+      case JsonMessage.QUIZ_RESULT:
         return;
       case JsonMessage.NEXT_QUIZ:
-        GotakuQuiz gotakuQuiz = quizResource.getNextQuiz();
-        sendQuiz(session, gotakuQuiz);
-        return;
-      case JsonMessage.QUIZ_RESULT:
+        sendQuiz(session, quizResource.getNextQuiz());
         return;
       case JsonMessage.SEND_RECORD: {
         Object[] parameters = json.parameters;
-        recordsTable.insertIn(new QuizRecord((String) parameters[0], (int) parameters[1],
+        recordsTable.insert(new QuizRecord(-1, (String) parameters[0], (int) parameters[1],
             (int) parameters[2], (int) parameters[3]));
         return;
       }
@@ -151,6 +150,11 @@ public class QuizWebsocketHandler {
     public String method;
     public Object[] parameters;
 
+
+    @SuppressWarnings("unused")
+    public JsonMessage() {
+
+    }
 
     public JsonMessage(String method, Object[] parameters) {
       this.method = method;

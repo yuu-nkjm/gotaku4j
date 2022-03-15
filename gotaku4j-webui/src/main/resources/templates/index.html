@@ -8,10 +8,10 @@
 
 <body>
   <div class="container">
-    <div class="row bg-dark my-3">
+    <div class="row bg-dark my-3 p-1">
       <div class="col-12">
         <div class="float-right text-right">
-          <button class="btn btn-primary btn-sm text-white" id="btn-start-game">はじめる</button>
+          <button class="btn btn-primary btn-sm text-white" id="btn-start-game">スタートメニュー</button>
         </div>
       </div>
     </div>
@@ -32,18 +32,20 @@
             第<span id="span-stage-quiz-number">0</span>問
           </div>
           <div class="card-body">
-            <p id="div-question" class="h4"></p>
+            <p id="div-question" class="h3"></p>
           </div>
         </div>
         <div class="card border-white">
-          <div>
-            残り<span id="span-time" class="badge badge-secondary"></span>秒
-          </div>
-          <button id="btn-s-0" class="btn btn-outline-dark btn-lg btn-selection m-2 h3" disabled></button>
-          <button id="btn-s-1" class="btn btn-outline-dark btn-lg btn-selection m-2 h3" disabled></button>
-          <button id="btn-s-2" class="btn btn-outline-dark btn-lg btn-selection m-2 h3" disabled></button>
-          <button id="btn-s-3" class="btn btn-outline-dark btn-lg btn-selection m-2 h3" disabled></button>
-          <button id="btn-s-4" class="btn btn-outline-dark btn-lg btn-selection m-2 h3" disabled></button>
+          <button id="btn-s-0" data-selection=0
+            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="0" disabled></button>
+          <button id="btn-s-1" data-selection=1
+            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="1" disabled></button>
+          <button id="btn-s-2" data-selection=2
+            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="2" disabled></button>
+          <button id="btn-s-3" data-selection=3
+            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="3" disabled></button>
+          <button id="btn-s-4" data-selection=4
+            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="4" disabled></button>
         </div>
       </div>
       <div class="col-md-5">
@@ -52,11 +54,16 @@
             <div class="row">
               <div class="col-12">
                 <h6>
-                  ステージ <span id="span-stage-number" class="ml-2">1</span>
+                  <span id="span-book-title">1</span>
                 </h6>
+                <h6>
+                  ステージ <span id="span-stage-number">1</span>: <span id="span-border-number">4</span>問
+                  正解で合格
+                </h6>
+
               </div>
             </div>
-            <div class="row">
+            <div class="row mt-2">
               <div class="col-12">
                 <div class="h4">
                   <div id="div-border-line">
@@ -66,10 +73,6 @@
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="card card-default mb-3">
-          <div class="card-body">
             <div class="row">
               <div class="col-4">
                 <h6>得点</h6>
@@ -77,10 +80,10 @@
               </div>
               <div class="col-8">
                 <h6>
-                  <span id="span-total-score">0</span>点
+                  <span id="span-total-score" class="text-primary">0</span>点
                 </h6>
                 <h6>
-                  <span id="span-total-ratio">-</span>%
+                  <span id="span-total-ratio" class="text-primary">-</span>%
                 </h6>
               </div>
             </div>
@@ -95,6 +98,9 @@
               <span id="div-prev-answer"></span>
             </p>
           </div>
+        </div>
+        <div class="text-right">
+          残り<span id="span-time" class="badge badge-secondary"></span>秒
         </div>
       </div>
     </div>
@@ -122,6 +128,9 @@
   </audio>
   <audio id="audio-border-line" preload="auto">
     <source src="../audio/se_pipipi_2.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="audio-stage-1" preload="auto">
+    <source src="../audio/morning_2.mp3" type="audio/mpeg" />
   </audio>
 </body>
 

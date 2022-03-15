@@ -2,28 +2,28 @@ package org.nkjmlab.quiz.gotaku.webui;
 
 import java.io.File;
 import javax.sql.DataSource;
-import org.nkjmlab.quiz.gotaku.webui.util.TemplateEngineBuilder;
-import org.nkjmlab.quiz.gotaku.webui.util.ViewModel;
 import org.nkjmlab.util.h2.H2LocalDataSourceFactory;
 import org.nkjmlab.util.jackson.JacksonMapper;
 import org.nkjmlab.util.java.json.FileDatabaseConfigJson;
 import org.nkjmlab.util.java.lang.ProcessUtils;
 import org.nkjmlab.util.java.lang.ResourceUtils;
+import org.nkjmlab.util.javax.servlet.ViewModel;
+import org.nkjmlab.util.thymeleaf.TemplateEngineBuilder;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 
 public class GotakuApplication {
 
-  private static final org.slf4j.Logger log =
-      org.slf4j.LoggerFactory.getLogger(GotakuApplication.class);
+  private static final org.apache.logging.log4j.Logger log =
+      org.apache.logging.log4j.LogManager.getLogger();
 
-  public static final File APP_ROOT_DIR = ResourceUtils.getFile("/");
+  public static final File APP_ROOT_DIR = ResourceUtils.getResourceAsFile("/");
   private static final String WEB_ROOT_DIR_NAME = "/webroot";
   private static final File WEB_ROOT_DIR = new File(APP_ROOT_DIR, WEB_ROOT_DIR_NAME);
   public static final File PROBLEM_ROOT_DIR = new File(APP_ROOT_DIR, "problems");
 
-  private static long THYMELEAF_EXPIRE_TIME_MILLI_SECOND = 1 * 1000;
+  private static final long THYMELEAF_EXPIRE_TIME_MILLI_SECOND = 1 * 1000;
   private final Javalin app;
   private final DataSource dataSourceForFileDb;
 
@@ -35,10 +35,10 @@ public class GotakuApplication {
 
   public GotakuApplication() {
     FileDatabaseConfigJson conf = JacksonMapper.getDefaultMapper()
-        .toObject(ResourceUtils.getFile("/h2.conf"), FileDatabaseConfigJson.Builder.class).build();
+        .toObject(ResourceUtils.getResourceAsFile("/h2.conf"), FileDatabaseConfigJson.Builder.class)
+        .build();
     H2LocalDataSourceFactory factory = H2LocalDataSourceFactory.builder(conf).build();
-    log.info("{}", conf);
-    log.info("factory=[{}]", factory);
+    log.info("{}, factory=[{}]", conf, factory);
     this.dataSourceForFileDb = factory.createMixedModeDataSource();
     this.app = createJavalin();
 
@@ -46,6 +46,7 @@ public class GotakuApplication {
 
   private Javalin createJavalin() {
     QuizRecordsTable recordsTable = new QuizRecordsTable(dataSourceForFileDb);
+
     JavalinThymeleaf.configure(new TemplateEngineBuilder().setPrefix("/templates/")
         .setTtlMs(THYMELEAF_EXPIRE_TIME_MILLI_SECOND).build());
 
@@ -56,7 +57,6 @@ public class GotakuApplication {
     });
 
     app.ws("/websocket/play", ws -> {
-      // ws.onConnect(ctx -> QuizWebsocketHandler.getHandler().onConnect(ctx.session));
       ws.onClose(ctx -> QuizWebsocketHandler.getHandler(ctx.getSessionId()).onClose(ctx.session,
           ctx.status(), ctx.reason()));
       ws.onError(ctx -> QuizWebsocketHandler.getHandler(ctx.getSessionId()).onError(ctx.session,
@@ -72,7 +72,7 @@ public class GotakuApplication {
     app.get("/app/{pageName}", ctx -> {
       String pageName =
           ctx.pathParam("pageName") == null ? "index.html" : ctx.pathParam("pageName");
-      ctx.render(pageName, createDefaultModel());
+      ctx.render(pageName, createDefaultModel().getMap());
     });
 
     return app;
@@ -83,8 +83,7 @@ public class GotakuApplication {
   }
 
   private static ViewModel createDefaultModel() {
-    ViewModel model =
-        new ViewModel.Builder().setFileModifiedDate(WEB_ROOT_DIR, true, "js", "css").build();
+    ViewModel model = ViewModel.builder().setFileModifiedDate(WEB_ROOT_DIR, 10, "js", "css").build();
     return model;
   }
 

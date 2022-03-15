@@ -2,7 +2,7 @@ let answer = "";
 let countDownTimer = null;
 
 function startCountDown() {
-  let time = 20;
+  let time = 30;
   playCountDown();
 
   function playCountDown() {
@@ -13,11 +13,13 @@ function startCountDown() {
       doJadge(false);
       return;
     }
-    document.getElementById("audio-timer").currentTime = 0;
-    document.getElementById("audio-timer").play();
+    const ad = document.getElementById("audio-timer");
+    ad.currentTime = 0;
+    // Count down sound
+    ad.play();
     time--;
     clearTimeout(countDownTimer);
-    countDownTimer = setTimeout(playCountDown, 1000);
+    countDownTimer = setTimeout(playCountDown, 1200);
   }
 }
 
@@ -69,8 +71,10 @@ class PlayWebSocket {
           console.error("invalid method name =>" + json.method);
       }
       function _bookTitles(titles) {
-        document.getElementById("audio-select-book").currentTime = 0;
-        document.getElementById("audio-select-book").play();
+        const ad = document.getElementById("audio-select-book")
+        ad.currentTime = 0;
+        ad.volume=0.5;
+        ad.play();
         $("#div-play-ui").hide();
         $("#div-start-ui").show();
         $("#btn-group-book-titles").empty();
@@ -86,7 +90,7 @@ class PlayWebSocket {
         $("#span-stage-quiz-number").text(stageQuizNumber);
         $("#div-question").html(quiz.question);
         for (var i = 0; i < 5; i++) {
-          $("#btn-s-" + i).html("<span class='mr-2 small'>[" + (i + 1) + "]</span> " + "<span class='selection'>" + quiz.selections[i] + "</span>");
+          $("#btn-s-" + i).html("<span class='mr-2 small'>[" + (i + 1) + "]: </span> " + "<span class='selection h2'>" + quiz.selections[i] + "</span>");
         }
         answer = quiz.answer;
         $("#span-time").text("--");
@@ -94,6 +98,7 @@ class PlayWebSocket {
         setTimeout(function () {
           startCountDown();
           $(".btn-selection").prop("disabled", false);
+          $("#btn-s-0").focus();
         }, 2000);
       }
 

@@ -17,7 +17,7 @@ function resetAll() {
 	totalQuizNumber = 0;
 	totalScore = 0;
 	stageNumber = 1;
-	borders = [4, 4, 4, 0, 5, 5, 5, 0, 6, 6, 6, 0, 7, 7, 7, 8];
+	borders = [4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8];
 	quizStatus = [];
 	stageCorrectAnswers = 0;
 	totalCorrectAnswers = 0;
@@ -27,22 +27,50 @@ function resetAll() {
 }
 
 $(function () {
+const validKeys = ["1", "2", "3", "4", "5"];
+
+  document.addEventListener('keydown', e=>{
+    try {
+      if(e.key=="ArrowUp"||e.key=="ArrowDown"){
+        const f = $('.btn-selection:focus');
+        const v = parseInt(f.attr("data-selection"));
+        const n = e.key=="ArrowUp"? v-1:v+1;
+        if(!n){
+          window.setTimeout(() => document.getElementById("btn-s-0").focus(), 0);
+        }else if(0<=n&&n<=4){
+          window.setTimeout(() => document.getElementById("btn-s-"+n).focus(), 0);
+        }
+      }
+    } catch (error) {
+      window.setTimeout(() => document.getElementById("btn-s-0").focus(), 0);
+    }
+
+    if(validKeys.includes(e.key) && $("#btn-s-0").prop("disabled")){
+      $("#btn-s-"+(parseInt(e.key)-1)).click();
+    }
+    return false;
+  });
+
+    document.getElementById("audio-ok").load();
+    document.getElementById("audio-ng").load();
+    document.getElementById("audio-next-stage").load();
+    document.getElementById("audio-select-book").load();
+    document.getElementById("audio-show-quiz").load();
+    document.getElementById("audio-game-over").load();
+    document.getElementById("audio-timer").volume=0.5;
+    document.getElementById("audio-timer").load();
+    document.getElementById("audio-border-line").load();
+
+
 	$("#btn-start-game").click(function () {
 		clearTimeout(countDownTimer);
-		document.getElementById("audio-ok").load();
-		document.getElementById("audio-ng").load();
-		document.getElementById("audio-next-stage").load();
-		document.getElementById("audio-select-book").load();
-		document.getElementById("audio-show-quiz").load();
-		document.getElementById("audio-game-over").load();
-		document.getElementById("audio-timer").load();
-		document.getElementById("audio-border-line").load();
 		resetAll();
 		websocket.sendAsJsonRpc("startGame", []);
 	});
 
 	$("#btn-group-book-titles").on('click', '.btn-book-title', function () {
 		const title = $(this).text();
+		$("#span-book-title").text(title);
 		console.log(title);
 		$("#div-start-ui").hide();
 		websocket.sendAsJsonRpc("startBook", [title]);
@@ -56,6 +84,12 @@ $(function () {
 		$(this).removeClass("btn-outline-dark active");
 		$(this).addClass(jadge ? "btn-success" : "btn-danger");
 		doJadge(jadge, $(this));
+		if($(this)){
+      websocket.sendAsJsonRpc("quizResult", [$(this).attr("data-selection"), $(this).text()]);
+    }else{
+      websocket.sendAsJsonRpc("quizResult", [null,null]);
+    }
+
 	});
 	websocket.open();
 });
@@ -68,8 +102,8 @@ function doJadge(jadge, selectedItem) {
 
 	$(".btn-selection").prop("disabled", true);
 	$("#div-jadge").removeClass();
-	$("#div-prev-question").text("Q. " + $("#div-question").text());
-	$("#div-prev-answer").text("A. " + answer);
+	$("#div-prev-question").text("問題: " + $("#div-question").text());
+	$("#div-prev-answer").text("正解: " + answer);
 	$("#div-jadge").text(jadge ? "正解!" : "不正解!");
 	$("#div-jadge").addClass(jadge ? "badge badge-success" : "badge badge-danger");
 
@@ -137,8 +171,13 @@ function goNextQuiz() {
 	setTimeout(function () {
 		$(".btn-selection").addClass("btn-outline-dark");
 		$(".btn-selection").removeClass("btn-success btn-danger active");
+    $("#btn-s-3").focus();
 		websocket.sendAsJsonRpc("nextQuiz", []);
 	}, 3000);
+	const ad = document.getElementById("audio-stage-1")
+	ad.loop=true;
+	ad.volume=0.3;
+  ad.play();
 }
 
 function updateResultMeter() {
@@ -180,6 +219,8 @@ function startStage() {
 	document.getElementById("audio-border-line").play();
 
 	const borderLine = borders[stageNumber - 1];
+	$("#span-border-number").text(borderLine);
+
 	$("#span-border-line-indicator").animate({
 		"padding-left": (borderLine - 1) * 0.88 + "em",
 	}, borderLine * 500, "linear", function () {

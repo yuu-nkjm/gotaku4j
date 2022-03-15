@@ -8,3 +8,5 @@ BGM・効果音には，[ユウラボ8bitサウンド工房 (スキップモア)
 - se_quizright_1.mp3
 - se_te.mp3
 
+[フリーBGM素材「Morning」ダウンロードページ｜フリーBGM DOVA\-SYNDROME](https://dova-s.jp/bgm/download2452.html)
+- morning_2.mp3

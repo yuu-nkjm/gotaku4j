@@ -1,4 +1,4 @@
-package org.nkjmlab.quiz.gotaku.gotakudos;
+package org.nkjmlab.quiz.gotaku.converter;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuiz;
+import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuizBook;
+import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuizGenre;
 import org.nkjmlab.util.java.function.Try;
 
 public class GotakuTextFileConverter {

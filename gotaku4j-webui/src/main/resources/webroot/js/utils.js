@@ -97,7 +97,6 @@ function isEnableLocalStorage() {
 
 function swalConfirm(title, text, type, callback) {
   Swal.fire({
-    animation: false,
     title: title,
     html: text ? text : null,
     type: type ? type : null,
@@ -118,13 +117,14 @@ const swalToast = Swal.mixin({
 })
 
 
-function swalAlert(title, text, type, callback, confirmButtonText) {
+function swalAlert(title, text, type, callback, confirmButtonText, showConfirmButton, timer) {
   Swal.fire({
-    animation: true,
     title: title,
     html: text ? text : null,
     icon: type ? type : null,
-    confirmButtonText: confirmButtonText ? confirmButtonText : "OK"
+    confirmButtonText: confirmButtonText ? confirmButtonText : "OK",
+    showConfirmButton: showConfirmButton===false? false:true,
+    timer: timer ? timer: null
   }).then((result) => {
     if (!callback) {
       return;
@@ -135,7 +135,6 @@ function swalAlert(title, text, type, callback, confirmButtonText) {
 
 function swalInput(title, text, inputValue, inputPlaceholder, callback) {
   Swal.fire({
-    animation: false,
     title: title,
     input: 'text',
     html: text ? text : null,
@@ -152,7 +151,6 @@ function swalInput(title, text, inputValue, inputPlaceholder, callback) {
 
 function swalTextArea(title, text, inputValue, inputPlaceholder, callback) {
   Swal.fire({
-    animation: false,
     title: title,
     input: 'textarea',
     html: text ? text : null,

@@ -75,10 +75,8 @@ body {
   -ms-text-size-adjust: 100%;
 }
 
-:focus{
-  outline: none;
-  box-shadow: none;
-  border: 3px solid #007bff;
-  background-color: #f0f0f0;
+.btn-selection:focus{
+  color: #ffffff;
+  background-color: #000000;
 }
 

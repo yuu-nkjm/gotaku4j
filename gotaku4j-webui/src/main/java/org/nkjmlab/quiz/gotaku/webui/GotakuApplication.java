@@ -1,13 +1,21 @@
 package org.nkjmlab.quiz.gotaku.webui;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
 import javax.sql.DataSource;
+import org.nkjmlab.quiz.gotaku.model.QuizzesTable;
 import org.nkjmlab.util.h2.H2LocalDataSourceFactory;
+import org.nkjmlab.util.h2.H2ServerUtils;
 import org.nkjmlab.util.jackson.JacksonMapper;
+import org.nkjmlab.util.java.function.Try;
 import org.nkjmlab.util.java.json.FileDatabaseConfigJson;
 import org.nkjmlab.util.java.lang.ProcessUtils;
 import org.nkjmlab.util.java.lang.ResourceUtils;
 import org.nkjmlab.util.javax.servlet.ViewModel;
+import org.nkjmlab.util.javax.servlet.ViewModel.Builder;
 import org.nkjmlab.util.thymeleaf.TemplateEngineBuilder;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
@@ -25,9 +33,11 @@ public class GotakuApplication {
 
   private static final long THYMELEAF_EXPIRE_TIME_MILLI_SECOND = 1 * 1000;
   private final Javalin app;
-  private final DataSource dataSourceForFileDb;
+  private final DataSource dataSource;
 
   public static void main(String[] args) {
+    H2ServerUtils.startDefaultTcpServerProcessAndWaitFor();
+    H2ServerUtils.startDefaultWebConsoleServerProcessAndWaitFor();
     int port = args.length == 0 ? 7890 : Integer.valueOf(args[0]);
     ProcessUtils.stopProcessBindingPortIfExists(port);
     new GotakuApplication().start(port);
@@ -39,13 +49,12 @@ public class GotakuApplication {
         .build();
     H2LocalDataSourceFactory factory = H2LocalDataSourceFactory.builder(conf).build();
     log.info("{}, factory=[{}]", conf, factory);
-    this.dataSourceForFileDb = factory.createMixedModeDataSource();
+    this.dataSource = factory.createServerModeDataSource();
     this.app = createJavalin();
 
   }
 
   private Javalin createJavalin() {
-    QuizRecordsTable recordsTable = new QuizRecordsTable(dataSourceForFileDb);
 
     JavalinThymeleaf.configure(new TemplateEngineBuilder().setPrefix("/templates/")
         .setTtlMs(THYMELEAF_EXPIRE_TIME_MILLI_SECOND).build());
@@ -56,13 +65,13 @@ public class GotakuApplication {
       config.enableCorsForAllOrigins();
     });
 
+    QuizWebsocketHandler handler = new QuizWebsocketHandler(dataSource);
+
     app.ws("/websocket/play", ws -> {
-      ws.onClose(ctx -> QuizWebsocketHandler.getHandler(ctx.getSessionId()).onClose(ctx.session,
-          ctx.status(), ctx.reason()));
-      ws.onError(ctx -> QuizWebsocketHandler.getHandler(ctx.getSessionId()).onError(ctx.session,
-          ctx.error()));
-      ws.onMessage(ctx -> QuizWebsocketHandler.getHandler(ctx.getSessionId()).onMessage(ctx.session,
-          ctx.message(), recordsTable));
+      ws.onConnect(ctx->handler.onConnect(ctx));
+      ws.onClose(ctx -> handler.onClose(ctx, ctx.session, ctx.status(), ctx.reason()));
+      ws.onError(ctx -> handler.onError(ctx.session, ctx.error()));
+      ws.onMessage(ctx -> handler.onMessage(ctx));
     });
 
     app.get("/app", ctx -> {
@@ -72,7 +81,20 @@ public class GotakuApplication {
     app.get("/app/{pageName}", ctx -> {
       String pageName =
           ctx.pathParam("pageName") == null ? "index.html" : ctx.pathParam("pageName");
-      ctx.render(pageName, createDefaultModel().getMap());
+
+      Builder model = createDefaultModel();
+      try {
+        List<String> players = Arrays
+            .asList(Files.readAllLines(ResourceUtils.getResourceAsFile("/players.csv").toPath())
+                .get(0).split(","));
+        model.put("players", players);
+      } catch (IOException e) {
+        Try.rethrow(e);
+      }
+
+
+      model.put("books", new QuizzesTable(dataSource).getBookNames());
+      ctx.render(pageName, model.build().getMap());
     });
 
     return app;
@@ -82,9 +104,8 @@ public class GotakuApplication {
     app.start(port);
   }
 
-  private static ViewModel createDefaultModel() {
-    ViewModel model = ViewModel.builder().setFileModifiedDate(WEB_ROOT_DIR, 10, "js", "css").build();
-    return model;
+  private static Builder createDefaultModel() {
+    return ViewModel.builder().setFileModifiedDate(WEB_ROOT_DIR, 10, "js", "css");
   }
 
 

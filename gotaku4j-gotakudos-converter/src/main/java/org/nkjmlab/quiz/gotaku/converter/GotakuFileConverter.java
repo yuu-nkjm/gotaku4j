@@ -1,4 +1,4 @@
-package org.nkjmlab.quiz.gotaku.gotakudos;
+package org.nkjmlab.quiz.gotaku.converter;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,6 +14,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuiz;
+import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuizBook;
+import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuizGenre;
 import org.nkjmlab.quiz.gotaku.util.HexUtils;
 import org.nkjmlab.util.jackson.JacksonMapper;
 import org.nkjmlab.util.java.function.Try;
@@ -82,8 +85,13 @@ public class GotakuFileConverter {
    * @param outputDir
    */
   public void convertToTextFile(File _5tqSrcDir, File outputDir) {
+    if (!_5tqSrcDir.isDirectory()) {
+      throw new IllegalArgumentException(
+          "input target [" + _5tqSrcDir + "] should be a directory.");
+    }
     if (!outputDir.isDirectory()) {
-      throw new RuntimeException("output target [" + outputDir + "] should be a directory.");
+      throw new IllegalArgumentException(
+          "output target [" + outputDir + "] should be a directory.");
     }
     GotakuQuizBook book = parse(_5tqSrcDir);
     List<GotakuQuizGenre> genres = book.getGenres();
@@ -104,7 +112,7 @@ public class GotakuFileConverter {
           bw.newLine();
         }
       } catch (IOException e) {
-        e.printStackTrace();
+        throw Try.rethrow(e);
       }
     }
   }

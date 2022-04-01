@@ -18,8 +18,8 @@ import org.nkjmlab.sorm4j.util.table_def.annotation.PrimaryKeyColumns;
 public class QuizzesTable extends BasicH2Table<Quiz> {
 
   @OrmRecord
-  @PrimaryKeyColumns({"book_name", "qid"})
-  @IndexColumns({"book_name", "qid"})
+  @PrimaryKeyColumns({"book_name", "genre", "qid"})
+  @IndexColumns({"book_name", "genre", "qid"})
   public static record Quiz(String bookName, String genre, int qid, String question, String choice1,
       String choice2, String choice3, String choice4, String choice5, String explanation) {
 

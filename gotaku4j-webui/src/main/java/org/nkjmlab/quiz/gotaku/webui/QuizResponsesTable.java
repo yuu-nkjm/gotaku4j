@@ -16,15 +16,13 @@ public class QuizResponsesTable extends BasicH2Table<QuizResponse> {
     super(Sorm.create(dataSorce), QuizResponse.class);
     createTableIfNotExists();
     createIndexesIfNotExists();
-
   }
 
 
   @PrimaryKeyColumns({"player_id", "game_id", "stage", "q_num"})
-  @IndexColumns({"player_id", "book_name", "jadge"})
-  @IndexColumns({"player_id", "book_name"})
+  @IndexColumns({"player_id", "book_name", "genre", "jadge"})
   public static record QuizResponse(String playerId, long gameId, int stage, int qNum,
-      String bookName, int qid, int elapsedTime, String choice, boolean jadge,
+      String bookName, String genre, int qid, int elapsedTime, String choice, boolean jadge,
       LocalDateTime createdAt) {
   }
 
@@ -32,16 +30,16 @@ public class QuizResponsesTable extends BasicH2Table<QuizResponse> {
   public List<RowMap> readPlayerLog(String playerId, String bookName, String genre) {
     String sql =
         """
-        WITH
-            R AS (SELECT * FROM QUIZ_RESPONSES where PLAYER_ID=?),
-            Q AS(SELECT * FROM QUIZS where BOOK_NAME=? AND GENRE=?),
-            R1 AS(
-            SELECT Q.BOOK_NAME, Q.QID, SUM(CASE WHEN JADGE=TRUE THEN 1 ELSE -1 END) AS SCORE , COUNT(*) AS NUM
-            FROM Q
-            LEFT JOIN R
-            USING (BOOK_NAME, QID)  GROUP BY Q.BOOK_NAME, Q.QID ORDER BY SCORE DESC)
-            SELECT R1.BOOK_NAME ,R1.QID ,QUESTION ,CHOICE1 ,EXPLANATION, SCORE  FROM R1 JOIN QUIZS USING(BOOK_NAME,QID)
-                    """;
+            WITH
+                R AS (SELECT * FROM QUIZ_RESPONSES where PLAYER_ID=?),
+                Q AS(SELECT * FROM QUIZS where BOOK_NAME=? AND GENRE=?),
+                R1 AS(
+                SELECT Q.BOOK_NAME, Q.GENRE, Q.QID, SUM(CASE WHEN JADGE=TRUE THEN 1 ELSE -1 END) AS SCORE , COUNT(*) AS NUM
+                FROM Q
+                LEFT JOIN R
+                USING (BOOK_NAME, GENRE, QID)  GROUP BY Q.BOOK_NAME, Q.QID ORDER BY SCORE DESC)
+                SELECT R1.BOOK_NAME, R1.GENRE, R1.QID ,QUESTION ,CHOICE1 ,EXPLANATION, SCORE  FROM R1 JOIN QUIZS USING(BOOK_NAME, GENRE, QID)
+                        """;
 
     return getOrm().readList(RowMap.class, sql, playerId, bookName, genre);
   }

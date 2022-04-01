@@ -109,8 +109,9 @@ public class QuizWebsocketHandler {
         int qNum = ctx.attribute("q_num");
         String bookName = ctx.attribute("book_name");
         int qid = ctx.attribute("qid");
+        String genre = ctx.attribute("genre");
         Object[] ps = json.parameters;
-        responsesTable.insert(new QuizResponse(playerId, gameId, stage, qNum, bookName, qid,
+        responsesTable.insert(new QuizResponse(playerId, gameId, stage, qNum, bookName, genre, qid,
             (int) ps[0], (String) ps[1], (boolean) ps[2], LocalDateTime.now()));
 
       }
@@ -119,8 +120,10 @@ public class QuizWebsocketHandler {
         String bookName = ctx.attribute("book_name");
         List<String> genres = ctx.attribute("genres");
         Optional<QuizJson> oQuiz = getNextQuiz(ctx, bookName, genres);
+
         oQuiz.ifPresent(quiz -> {
           ctx.attribute("qid", quiz.qid);
+          ctx.attribute("genre", quiz.genre);
           sendText(ctx.session,
               new SendJsonMessage(SendJsonMessage.MethodName.QUIZ, new Object[] {quiz}));
         });
@@ -174,6 +177,7 @@ public class QuizWebsocketHandler {
 
   private static class QuizJson {
 
+    public final String genre;
     public final int qid;
     public final String question;
     public final String explanation;
@@ -181,6 +185,7 @@ public class QuizWebsocketHandler {
     public final List<String> selections;
 
     public QuizJson(Quiz quiz) {
+      this.genre = quiz.genre();
       this.qid = quiz.qid();
       this.question = quiz.question();
       this.explanation = quiz.explanation();
@@ -193,10 +198,10 @@ public class QuizWebsocketHandler {
 
     @Override
     public String toString() {
-      return "GotakuQuiz [question=" + question + ", explanation=" + explanation + ", answer="
-          + answer + ", selections=" + selections + "]";
+      return "QuizJson [genre=" + genre + ", qid=" + qid + ", question=" + question
+          + ", explanation=" + explanation + ", answer=" + answer + ", selections=" + selections
+          + "]";
     }
-
 
   }
 

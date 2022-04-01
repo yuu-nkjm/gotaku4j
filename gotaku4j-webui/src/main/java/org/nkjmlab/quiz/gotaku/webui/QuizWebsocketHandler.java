@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
@@ -15,15 +16,11 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
-import org.nkjmlab.quiz.gotaku.converter.GotakuFileConverter;
-import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuizBook;
 import org.nkjmlab.quiz.gotaku.model.QuizzesTable;
 import org.nkjmlab.quiz.gotaku.model.QuizzesTable.Quiz;
 import org.nkjmlab.quiz.gotaku.webui.QuizRecordsTable.QuizRecord;
 import org.nkjmlab.quiz.gotaku.webui.QuizResponsesTable.QuizResponse;
 import org.nkjmlab.util.jackson.JacksonMapper;
-import org.nkjmlab.util.java.function.Try;
-import org.nkjmlab.util.java.lang.ResourceUtils;
 import io.javalin.websocket.WsCloseContext;
 import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsMessageContext;
@@ -42,14 +39,14 @@ public class QuizWebsocketHandler {
   private final QuizResponsesTable responsesTable;
   private final QuizRecordsTable recordsTable;
 
-  public QuizWebsocketHandler(DataSource dataSource) {
-    this.recordsTable = new QuizRecordsTable(dataSource);
-    this.quizzesTable = new QuizzesTable(dataSource);
-    this.responsesTable = new QuizResponsesTable(dataSource);
-    Map<String, GotakuQuizBook> gotakuQuizBooks = new GotakuFileConverter().parseAll(
-        Try.getOrElseThrow(() -> ResourceUtils.getResourceAsFile("/quizbooks/5tq/"), Try::rethrow));
-    gotakuQuizBooks.values().forEach(b -> quizzesTable.mergeBook(b));
+  private final GotakuApplication application;
 
+  public QuizWebsocketHandler(GotakuApplication application, DataSource dataSource,
+      QuizzesTable quizzesTable) {
+    this.application = application;
+    this.recordsTable = new QuizRecordsTable(dataSource);
+    this.responsesTable = new QuizResponsesTable(dataSource);
+    this.quizzesTable = quizzesTable;
   }
 
   public void onClose(WsCloseContext ctx, Session session, int statusCode, String reason) {
@@ -70,18 +67,32 @@ public class QuizWebsocketHandler {
 
     RecievedJsonMessage json = mapper.toObject(ctx.message(), RecievedJsonMessage.class);
 
-    log.debug("{}", json);
+    log.debug("Call {}", json);
     switch (json.method) {
+      case RELOAD_BOOKS -> {
+        application.loadBooks();
+        sendText(ctx.session,
+            new SendJsonMessage(SendJsonMessage.MethodName.RELOAD, new Object[] {}));
+      }
       case SELECT_PLAYER -> {
         ctx.attribute("player_id", json.parameters[0]);
       }
       case SELECT_BOOK -> {
+        String playerId = ctx.attribute("player_id");
         String bookName = json.parameters[0].toString();
         ctx.attribute("book_name", bookName);
+        sendText(ctx.session, new SendJsonMessage(SendJsonMessage.MethodName.GENRES,
+            new Object[] {quizzesTable.readGenres(bookName)}));
         sendText(ctx.session,
             new SendJsonMessage(SendJsonMessage.MethodName.RANKING,
                 new Object[] {recordsTable.readScoreRanking(bookName),
                     recordsTable.readAccuracyRateRanking(bookName)}));
+        sendText(ctx.session, new SendJsonMessage(SendJsonMessage.MethodName.RESULTS,
+            new Object[] {readResults(bookName, playerId)}));
+
+      }
+      case SELECT_GENRES -> {
+        ctx.attribute("genres", json.parameters[0]);
       }
       case START_GAME -> {
         ctx.attribute("game_id", System.currentTimeMillis());
@@ -106,10 +117,18 @@ public class QuizWebsocketHandler {
       case NEXT_QUIZ -> {
         ctx.attribute("q_num", json.parameters[0]);
         String bookName = ctx.attribute("book_name");
-        QuizJson quiz = getNextQuiz(ctx, bookName);
-        ctx.attribute("qid", quiz.qid);
-        sendText(ctx.session,
-            new SendJsonMessage(SendJsonMessage.MethodName.QUIZ, new Object[] {quiz}));
+        List<String> genres = ctx.attribute("genres");
+        Optional<QuizJson> oQuiz = getNextQuiz(ctx, bookName, genres);
+        oQuiz.ifPresent(quiz -> {
+          ctx.attribute("qid", quiz.qid);
+          sendText(ctx.session,
+              new SendJsonMessage(SendJsonMessage.MethodName.QUIZ, new Object[] {quiz}));
+        });
+        if (oQuiz.isEmpty()) {
+          sendText(ctx.session,
+              new SendJsonMessage(SendJsonMessage.MethodName.GAME_CLEAR, new Object[] {}));
+        }
+
       }
       case SEND_RECORD -> {
         Object[] parameters = json.parameters;
@@ -128,17 +147,28 @@ public class QuizWebsocketHandler {
 
   }
 
-  private QuizJson getNextQuiz(WsMessageContext ctx, String bookName) {
+  private Object readResults(String bookName, String playerId) {
+    List<String> genres =
+        quizzesTable.readGenres(bookName).stream().map(m -> m.getString("GENRE")).toList();
+    return genres.stream().map(genre -> Map.of("genre", genre, "data",
+        responsesTable.readPlayerLog(playerId, bookName, genre))).toList();
+  }
+
+  private Optional<QuizJson> getNextQuiz(WsMessageContext ctx, String bookName,
+      List<String> genres) {
     log.info("bookName={}", bookName);
     LinkedList<Quiz> repo = ctx.attribute(bookName);
     if (repo == null) {
-      repo = new LinkedList<>(quizzesTable.readBook(bookName));
+      repo = new LinkedList<>(quizzesTable.readBook(bookName, genres));
       ctx.attribute(bookName, repo);
+    }
+    if (repo.isEmpty()) {
+      return Optional.empty();
     }
     int n = ThreadLocalRandom.current().nextInt(repo.size());
     Quiz q = repo.remove(n);
     log.info("Size of [{}] is [{}]", bookName, repo.size());
-    return new QuizJson(q);
+    return Optional.of(new QuizJson(q));
   }
 
 
@@ -207,7 +237,7 @@ public class QuizWebsocketHandler {
   private static class RecievedJsonMessage {
 
     public enum MethodName {
-      FINISH_STAGE, NEXT_QUIZ, QUIZ_RESPONSE, SEND_RECORD, SELECT_PLAYER, SELECT_BOOK, START_GAME, START_STAGE
+      FINISH_STAGE, NEXT_QUIZ, QUIZ_RESPONSE, SEND_RECORD, SELECT_PLAYER, SELECT_BOOK, START_GAME, START_STAGE, SELECT_GENRES, RELOAD_BOOKS
     }
 
     public MethodName method;
@@ -221,7 +251,11 @@ public class QuizWebsocketHandler {
 
     @Override
     public String toString() {
-      return "JsonMessage [method=" + method + ", parameters=" + Arrays.toString(parameters) + "]";
+      return "[" + method + ", "
+          + (parameters == null ? "null"
+              : Arrays.stream(parameters).map(
+                  o -> o == null ? "null" : o.toString() + "(" + o.getClass().getSimpleName() + ")")
+                  .toList() + "]");
     }
 
   }
@@ -230,7 +264,7 @@ public class QuizWebsocketHandler {
   private static class SendJsonMessage {
 
     public enum MethodName {
-      QUIZ, RANKING
+      QUIZ, RANKING, GENRES, RESULTS, GAME_CLEAR, RELOAD
     }
 
     public MethodName method;

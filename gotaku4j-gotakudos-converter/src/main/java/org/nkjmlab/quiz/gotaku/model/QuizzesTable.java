@@ -9,15 +9,17 @@ import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuizBook;
 import org.nkjmlab.quiz.gotaku.model.QuizzesTable.Quiz;
 import org.nkjmlab.sorm4j.Sorm;
 import org.nkjmlab.sorm4j.annotation.OrmRecord;
-import org.nkjmlab.sorm4j.util.h2.BasicH2TableWithDefinition;
-import org.nkjmlab.sorm4j.util.table_def.annotation.IndexPair;
-import org.nkjmlab.sorm4j.util.table_def.annotation.PrimaryKeyPair;
+import org.nkjmlab.sorm4j.result.RowMap;
+import org.nkjmlab.sorm4j.sql.OrderedParameterSqlParser;
+import org.nkjmlab.sorm4j.util.h2.BasicH2Table;
+import org.nkjmlab.sorm4j.util.table_def.annotation.IndexColumns;
+import org.nkjmlab.sorm4j.util.table_def.annotation.PrimaryKeyColumns;
 
-public class QuizzesTable extends BasicH2TableWithDefinition<Quiz> {
+public class QuizzesTable extends BasicH2Table<Quiz> {
 
   @OrmRecord
-  @PrimaryKeyPair({"book_name", "qid"})
-  @IndexPair({"book_name", "qid"})
+  @PrimaryKeyColumns({"book_name", "qid"})
+  @IndexColumns({"book_name", "qid"})
   public static record Quiz(String bookName, String genre, int qid, String question, String choice1,
       String choice2, String choice3, String choice4, String choice5, String explanation) {
 
@@ -25,15 +27,21 @@ public class QuizzesTable extends BasicH2TableWithDefinition<Quiz> {
 
   public QuizzesTable(DataSource dataSorce) {
     super(Sorm.create(dataSorce), Quiz.class);
+    dropTableIfExists();
     createTableIfNotExists();
     createIndexesIfNotExists();
   }
 
-
-  public List<String> readGenreNames() {
-    return getOrm().readList(String.class, "select distinct genre from " + getTableName());
+  public List<String> readGenreNames(String bookName) {
+    return getOrm().readList(String.class,
+        "select distinct genre from " + getTableName() + " where book_name=?", bookName);
   }
 
+
+  public List<RowMap> readGenres(String bookName) {
+    return getOrm().readList(RowMap.class, "select genre, count(*) as num from " + getTableName()
+        + " where book_name=? group by genre order by genre", bookName);
+  }
 
   public List<String> getBookNames() {
     return getOrm().readList(String.class, "select distinct book_name from " + getTableName());
@@ -62,8 +70,10 @@ public class QuizzesTable extends BasicH2TableWithDefinition<Quiz> {
   }
 
 
-  public List<Quiz> readBook(String bookName) {
-    return selectListAllEqual("book_name", bookName);
+  public List<Quiz> readBook(String bookName, List<String> genres) {
+    return readList(OrderedParameterSqlParser.parse(
+        "select * from " + getTableName() + " where book_name=? and genre in(<?>)", bookName,
+        genres));
   }
 
 

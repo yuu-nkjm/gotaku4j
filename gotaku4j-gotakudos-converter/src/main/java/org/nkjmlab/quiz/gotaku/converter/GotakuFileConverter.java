@@ -148,9 +148,12 @@ public class GotakuFileConverter {
       File tocFile = new File(_5tqDir, "toc.txt");
       return tocFile.exists() ? Files.readAllLines(tocFile.toPath()) : Collections.emptyList();
     }, Collections.emptyList());
+
     File _5tqFile = Arrays.stream(_5tqDir.listFiles())
         .filter(fileInSubDir -> fileInSubDir.getName().toLowerCase().endsWith(".5tq")).findFirst()
-        .get();
+        .orElseThrow(() -> {
+          throw new IllegalStateException(_5tqDir.getName());
+        });
 
     Map<String, Object> gaijiMap = Try.getOrElse(() -> {
       File gaijiFile = new File(_5tqDir, "gaiji.json");

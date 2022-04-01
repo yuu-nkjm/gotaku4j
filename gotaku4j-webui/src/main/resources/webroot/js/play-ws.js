@@ -1,9 +1,10 @@
-
+let results;
 class PlayWebSocket {
 
   constructor() {
     this.connection = null;
-    this.prevCorrectAnswer = "";
+    this.correctAnswer = "";
+    this.explanation = "";
     this.countDownTimer = null;
   }
 
@@ -62,16 +63,64 @@ class PlayWebSocket {
     connection.onmessage = function (e) {
       const json = JSON.parse(e.data);
       switch (json.method) {
+        case "RELOAD":
+          document.location.reload();
+          break;
+        case "GENRES":
+          _showGenres(json.parameters[0]);
+          break;
+        case "RESULTS":
+          _showResults(json.parameters[0]);
+          break;
         case "RANKING":
           _rankings(json.parameters[0], json.parameters[1]);
           break;
         case "QUIZ":
           _doQuiz(json.parameters[0]);
           break;
+        case "GAME_CLEAR":
+          swalAlert("全ての問題を解きました", "おめでとう！", "success", function () {
+            sendRecord();
+          }, null, false, 4000);
+          break;
         default:
           console.error("invalid method name =>" + json.method);
       }
+      function _showGenres(_genres) {
+        $("#div-ganres").empty();
+        for (let i = 0; i < _genres.length; i++) {
+          const _div = $('<div class="form-check"></div>');
+          _div.append($('<input class="form-check-input ganre" type="checkbox" id="genre-' + i + '" checked>').val(_genres[i].GENRE));
+          _div.append('<label class="form-check-label" for="ganre-' + i + '">' + _genres[i].GENRE + " (" + _genres[i].NUM + "題)" + '</label>')
+          $("#div-ganres").append(_div);
+        }
+      }
+      function _showResults(_results) {
+        results = _results
 
+        $('#div-tbl-results').empty();
+        for (let i = 0; i < results.length; i++) {
+          const _id = "tbl-results-" + i;
+          const _tbl = $('<table class="table table-bordered table-striped table-hover small">').attr("id", _id);
+          _tbl.append($('<thead><tr><th>問題集</th><th>QID</th><th>問題</th><th>正解</th><th>スコア</th><th>補足</th></tr></thead>'));
+          $('#div-tbl-results').append($('<h4>').addClass("text-center text-primary").text(results[i].genre));
+          $('#div-tbl-results').append(_tbl);
+          _tbl.ready(function () {
+            _tbl.DataTable({
+              data: results[i].data,
+              columns: [
+                { data: 'BOOKNAME' },
+                { data: 'QID' },
+                { data: 'QUESTION' },
+                { data: 'CHOICE1' },
+                { data: 'SCORE' },
+                { data: 'EXPLANATION' }
+              ],
+              pageLength: 1000
+            });
+          });
+        }
+      }
       function _rankings(_scoreRankings, _rateRankings) {
         _ranking("#tbody-score-ranking", _scoreRankings);
         _ranking("#tbody-rate-ranking", _rateRankings);
@@ -93,10 +142,11 @@ class PlayWebSocket {
         gameState.totalQuizNumber++;
         $("#span-stage-quiz-number").text(gameState.stageQuizNumber);
         $("#div-question").html(_quiz.question);
-        for (var i = 0; i < 5; i++) {
-          $("#btn-s-" + i).html("<span class='mr-2 small'>[" + (i + 1) + "]: </span> " + "<span class='selection h4'>" + _quiz.selections[i] + "</span>");
+        for (let i = 0; i < 5; i++) {
+          $("#btn-s-" + i).html("<span class='mr-2 small'>[" + (i + 1) + "] </span> " + "<span class='selection h4'>" + _quiz.selections[i] + "</span>");
         }
-        websocket.prevCorrectAnswer = _quiz.answer;
+        websocket.correctAnswer = _quiz.answer;
+        websocket.explanation = _quiz.explanation;
         $("#span-time").text("--");
 
         setTimeout(function () {

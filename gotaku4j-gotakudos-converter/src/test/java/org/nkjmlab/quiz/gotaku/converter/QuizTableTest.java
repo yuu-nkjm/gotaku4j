@@ -2,14 +2,15 @@ package org.nkjmlab.quiz.gotaku.converter;
 
 import static org.assertj.core.api.Assertions.*;
 import java.io.File;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.Test;
 import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuizBook;
 import org.nkjmlab.quiz.gotaku.model.QuizzesTable;
 import org.nkjmlab.sorm4j.Sorm;
+import org.nkjmlab.sorm4j.result.RowMap;
 import org.nkjmlab.util.java.lang.ResourceUtils;
 
 class QuizTableTest {
@@ -27,9 +28,10 @@ class QuizTableTest {
     List<QuizzesTable.Quiz> quizzes = quizTable.selectAll();
     assertThat(quizzes.size()).isEqualTo(1794);
 
-    List<String> genreNames = quizTable.readGenreNames();
-    assertThat(new HashSet<>(genreNames)).isEqualTo(
-        Set.of("ＴＶ・芸能・音楽", "歴史", "科学・工学・数学", "流行・文化・芸術", "スポーツ", "文学・語学", "地理・政経・時事", "雑学"));
+    List<RowMap> genreNames = quizTable.readGenres("正統派クイズ2000題");
+    assertThat(genreNames.stream().map(m -> m.get("GENRE").toString()).collect(Collectors.toSet()))
+        .isEqualTo(
+            Set.of("ＴＶ・芸能・音楽", "歴史", "科学・工学・数学", "流行・文化・芸術", "スポーツ", "文学・語学", "地理・政経・時事", "雑学"));
   }
 
 

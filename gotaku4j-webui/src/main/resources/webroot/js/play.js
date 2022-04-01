@@ -23,10 +23,12 @@ $(function () {
 			if (e.key == "ArrowUp" || e.key == "ArrowDown") {
 				const f = $('.btn-selection:focus');
 				const v = parseInt(f.attr("data-selection"));
-				const n = e.key == "ArrowUp" ? v - 1 : v + 1;
-				if (!n) {
+				if (isNaN(v)) {
 					window.setTimeout(() => document.getElementById("btn-s-0").focus(), 0);
-				} else if (0 <= n && n <= 4) {
+					return;
+				}
+				const n = e.key == "ArrowUp" ? Math.max(v - 1, 0) : Math.min(v + 1, 4);
+				if (0 <= n && n <= 4) {
 					window.setTimeout(() => document.getElementById("btn-s-" + n).focus(), 0);
 				}
 			}
@@ -55,21 +57,30 @@ $(function () {
 		websocket.sendAsJsonRpc("SELECT_BOOK", [_title]);
 		$("#btn-start-game").prop("disabled", false);
 	});
-
+	$("#btn-finish-game").click(function () {
+		swalConfirm("途中終了しますか？", "ここまでの成績が記録されます", "question", function () {
+			sendRecord();
+		});
+	});
 	$("#btn-start-game").click(function () {
-		window.addEventListener('beforeunload', function (e) {
-			e.preventDefault();
-			e.returnValue = 'Leave?';
-			return "Leave?"
-		});	
+		window.addEventListener('beforeunload', preventMove);
 		$("#div-book-select").hide();
+		const _activeGenres = $(".ganre:checked").map((i, e) => { return $(e).val() }).toArray();
+		websocket.sendAsJsonRpc("SELECT_GENRES", [_activeGenres]);
+		$("#span-active-genres").text(_activeGenres);
 		websocket.sendAsJsonRpc("START_GAME", []);
 		websocket.sendAsJsonRpc("START_STAGE", [gameState.stageNumber]);
 		startStage();
 	});
+	$("#btn-reload-books").click(function () {
+		websocket.sendAsJsonRpc("RELOAD_BOOKS", []);
+	});
+	$("#btn-start-menu").click(function () {
+		websocket.sendAsJsonRpc("RELOAD_BOOKS", []);
+	});
 
 	$(".btn-selection").click(function () {
-		const _jadge = $(this).find(".selection").text() == websocket.prevCorrectAnswer;
+		const _jadge = $(this).find(".selection").text() == websocket.correctAnswer;
 		$(this).removeClass("btn-outline-dark active");
 		$(this).addClass(_jadge ? "btn-success" : "btn-danger");
 		doJadge(_jadge, $(this));
@@ -101,8 +112,12 @@ function doJadge(_jadge, _selectedItem) {
 	$(".btn-selection").prop("disabled", true);
 	$("#div-jadge").removeClass();
 	$("#div-prev-question").text($("#div-question").text());
-	$("#div-prev-answer").text(websocket.prevCorrectAnswer);
-	const prevChoice = !_selectedItem ? "" : _selectedItem.text().split("]: ")[1];
+	$("#div-prev-answer").html(websocket.correctAnswer);
+	$("#div-prev-explanation").html(websocket.explanation);
+	$("#div-prev-explanation").ready(function () {
+		$("#div-prev-explanation img").addClass("img-thumbnail");
+	});
+	const prevChoice = !_selectedItem ? "" : _selectedItem.text().substring(4);
 	$("#div-prev-selection").text(prevChoice);
 	$("#div-jadge").text(_jadge ? "○" : "×");
 	$("#div-jadge").addClass("badge " + (_jadge ? "bg-success" : "bg-danger"));
@@ -160,10 +175,6 @@ function doJadge(_jadge, _selectedItem) {
 				}, null, false, 4000);
 			}
 		}, 4000);
-
-		function sendRecord() {
-			websocket.sendAsJsonRpc("SEND_RECORD", [gameState.totalQuizNumber, gameState.totalCorrectAnswers, gameState.totalScore]);
-		}
 	}
 }
 
@@ -233,3 +244,18 @@ function startStage() {
 	});
 }
 
+function sendRecord() {
+	websocket.sendAsJsonRpc("SEND_RECORD", [gameState.totalQuizNumber, gameState.totalCorrectAnswers, gameState.totalScore]);
+	window.removeEventListener('beforeunload', preventMove);
+	$(".audio").each((i, e) => e.pause());
+	document.getElementById("audio-next-stage").play();
+	swalAlert("総得点=" + gameState.totalScore, "成績を記録しました", "success", function () {
+		document.location.reload();
+	}, null, false, 4000);
+}
+
+function preventMove(e) {
+	e.preventDefault();
+	e.returnValue = 'Leave ?';
+	return "Leave ?"
+}

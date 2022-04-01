@@ -2,8 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="ja">
 
 <head>
-<object th:include="/fragments/head.html::meta-fragment" th:remove="tag"></object>
-<title>ごたく</title>
+  <object th:include="/fragments/head.html::meta-fragment" th:remove="tag"></object>
+  <title>ごたく</title>
 </head>
 
 <body>
@@ -11,7 +11,7 @@
     <div class="row bg-dark my-3 p-1">
       <div class="col-12">
         <div class="text-end text-white">
-          <span id="span-player"></span> <a class="btn btn-primary btn-sm" href=".">スタートメニュー </a>
+          <span id="span-player"></span> <button id="btn-start-menu" class="btn btn-primary btn-sm">スタートメニュー </button>
         </div>
       </div>
     </div>
@@ -28,16 +28,16 @@
           </div>
         </div>
         <div class="card border-white div-selections">
-          <button id="btn-s-0" data-selection=0
-            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="0" disabled></button>
-          <button id="btn-s-1" data-selection=1
-            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="1" disabled></button>
-          <button id="btn-s-2" data-selection=2
-            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="2" disabled></button>
-          <button id="btn-s-3" data-selection=3
-            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="3" disabled></button>
-          <button id="btn-s-4" data-selection=4
-            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="4" disabled></button>
+          <button id="btn-s-0" data-selection=0 class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="0"
+            disabled></button>
+          <button id="btn-s-1" data-selection=1 class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="1"
+            disabled></button>
+          <button id="btn-s-2" data-selection=2 class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="2"
+            disabled></button>
+          <button id="btn-s-3" data-selection=3 class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="3"
+            disabled></button>
+          <button id="btn-s-4" data-selection=4 class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="4"
+            disabled></button>
         </div>
       </div>
       <div class="col-md-5">
@@ -46,13 +46,16 @@
             <div class="row">
               <div class="col-12">
                 <h6>
-                  <span id="span-book-title"></span>
+                  <span class="badge bg-info">問題集</span> <span id="span-book-title"></span>
                 </h6>
                 <h6>
-                  ステージ <span id="span-stage-number">0</span>: <span id="span-border-number">0</span>問
-                  正解で合格
+                  <span class="badge bg-info">ジャンル</span> <span id="span-active-genres"></span>
                 </h6>
-
+                <hr>
+                <h6>
+                  <span class="badge bg-primary">ステージ <span id="span-stage-number">0</span></span> <span
+                    id="span-border-number">0</span>問 正解で合格
+                </h6>
               </div>
             </div>
             <div class="row mt-2">
@@ -67,8 +70,12 @@
             </div>
             <div class="row">
               <div class="col-4">
-                <h6>得点</h6>
-                <h6>正答率</h6>
+                <h6>
+                  <span class="badge bg-primary">得点</span>
+                </h6>
+                <h6>
+                  <span class="badge bg-primary">正答率</span>
+                </h6>
               </div>
               <div class="col-8">
                 <h6>
@@ -92,10 +99,16 @@
             <p class="text-end">
               <span id="div-jadge"></span> <span id="div-prev-selection" class="text-muted small"></span>
             </p>
+            <p>
+              <span class="badge bg-secondary">補足</span> <span id="div-prev-explanation"></span>
+            </p>
           </div>
         </div>
-        <div class="text-right">
+        <div>
           残り<span id="span-time" class="badge bg-secondary"></span>秒
+        </div>
+        <div class="text-end">
+          <button id="btn-finish-game" class="btn btn-danger btn-sm">終了</button>
         </div>
       </div>
     </div>

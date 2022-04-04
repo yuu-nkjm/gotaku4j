@@ -44,22 +44,54 @@
         <div class="card card-default mb-3">
           <div class="card-body">
             <div class="row">
-              <div class="col-12">
+              <div class="col-3">
                 <h6>
-                  <span class="badge bg-info">問題集</span> <span id="span-book-title"></span>
+                  <span class="badge bg-info">問題集</span>
                 </h6>
+              </div>
+              <div class="col-9">
                 <h6>
-                  <span class="badge bg-info">ジャンル</span> <span id="span-active-genres"></span>
-                </h6>
-                <hr>
-                <h6>
-                  <span class="badge bg-primary">ステージ <span id="span-stage-number">0</span></span> <span
-                    id="span-border-number">0</span>問 正解で合格
+                  <span id="span-book-title"></span>
                 </h6>
               </div>
             </div>
-            <div class="row mt-2">
+            <div class="row">
+              <div class="col-3">
+                <h6>
+                  <span class="badge bg-info">ジャンル</span>
+                </h6>
+              </div>
+              <div class="col-9">
+                <h6>
+                  <span id="span-active-genres"></span>
+                </h6>
+              </div>
+            </div>
+            <div class="row">
               <div class="col-12">
+                <hr>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <h6>
+                  <span class="badge bg-primary">ステージ <span id="span-stage-number">0</span></span>
+                </h6>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+              </div>
+              <div class="col-9">
+                <h6>
+                  <span id="span-border-number">0</span>問 正解で合格
+                </h6>
+              </div>
+            </div>
+            <div class="row my-2">
+              <div class="col-3">
+              </div>
+              <div class="col-9">
                 <div class="h4">
                   <div id="div-border-line">
                     <span id="span-border-line-indicator" class="text-warning">▼</span>
@@ -69,7 +101,10 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-4">
+              <div class="col-3">
+                <h6>
+                  <span class="badge bg-success">正答数</span>
+                </h6>
                 <h6>
                   <span class="badge bg-primary">得点</span>
                 </h6>
@@ -77,7 +112,10 @@
                   <span class="badge bg-primary">正答率</span>
                 </h6>
               </div>
-              <div class="col-8">
+              <div class="col-9">
+                <h6>
+                  <span id="span-total-correct-answer" class="text-success">0</span>問
+                </h6>
                 <h6>
                   <span id="span-total-score" class="text-primary">0</span>点
                 </h6>
@@ -90,18 +128,50 @@
         </div>
         <div class="card card-default mb-2">
           <div class="card-body">
-            <p>
-              <span class="badge bg-secondary">問題</span> <span id="div-prev-question"></span>
-            </p>
-            <p>
-              <span class="badge bg-success">正解</span> <span id="div-prev-answer"></span>
-            </p>
-            <p class="text-end">
-              <span id="div-jadge"></span> <span id="div-prev-selection" class="text-muted small"></span>
-            </p>
-            <p>
-              <span class="badge bg-secondary">補足</span> <span id="div-prev-explanation"></span>
-            </p>
+            <div class="row">
+              <div class="col-2">
+                <p>
+                  <span class="badge bg-secondary">問題</span>
+                </p>
+              </div>
+              <div class="col-10">
+                <p><span id="div-prev-question"></span></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-2">
+                <p>
+                  <span class="badge bg-success">正解</span>
+                </p>
+              </div>
+              <div class="col-10">
+                <p>
+                  <span id="div-prev-answer"></span>
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-2">
+                <span id="span-jadge"></span>
+              </div>
+              <div class="col-10">
+                <p>
+                  <span id="span-jadged-score"></span> <span id="div-prev-selection" class="text-muted small"></span>
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-2">
+                <p>
+                  <span class="badge bg-secondary">補足</span>
+                </p>
+              </div>
+              <div class="col-10">
+                <p>
+                  <span id="div-prev-explanation"></span>
+                </p>
+              </div>
+            </div>
           </div>
         </div>
         <div>
@@ -111,35 +181,33 @@
           <button id="btn-finish-game" class="btn btn-danger btn-sm">終了</button>
         </div>
       </div>
-    </div>
-  </div>
-  <audio id="audio-ok" class="audio" preload="auto">
-    <source src="../audio/se_quizright_1.mp3" type="audio/mpeg" />
-  </audio>
-  <audio id="audio-ng" class="audio" preload="auto">
-    <source src="../audio/se_quizmistake_1.mp3" type="audio/mpeg" />
-  </audio>
-  <audio id="audio-next-stage" class="audio" preload="auto">
-    <source src="../audio/arasuji_13.mp3" type="audio/mpeg" />
-  </audio>
-  <audio id="audio-select-book" class="audio" preload="auto" loop>
-    <source src="../audio/bgm_stagebgm_04_hq.mp3" type="audio/mpeg" />
-  </audio>
-  <audio id="audio-show-quiz" class="audio" preload="auto">
-    <source src="../audio/bgm_coinin_1.mp3" type="audio/mpeg" />
-  </audio>
-  <audio id="audio-game-over" class="audio" preload="auto">
-    <source src="../audio/bgm_gameover_1.mp3" type="audio/mpeg" />
-  </audio>
-  <audio id="audio-timer" class="audio" preload="auto">
-    <source src="../audio/se_te.mp3" type="audio/mpeg" />
-  </audio>
-  <audio id="audio-border-line" class="audio" preload="auto">
-    <source src="../audio/se_pipipi_2.mp3" type="audio/mpeg" />
-  </audio>
-  <audio id="audio-stage-1" class="audio" preload="auto">
-    <source src="../audio/morning_2.mp3" type="audio/mpeg" />
-  </audio>
+      <audio id="audio-ok" class="audio" preload="auto">
+        <source src="../audio/se_quizright_1.mp3" type="audio/mpeg" />
+      </audio>
+      <audio id="audio-ng" class="audio" preload="auto">
+        <source src="../audio/se_quizmistake_1.mp3" type="audio/mpeg" />
+      </audio>
+      <audio id="audio-next-stage" class="audio" preload="auto">
+        <source src="../audio/arasuji_13.mp3" type="audio/mpeg" />
+      </audio>
+      <audio id="audio-select-book" class="audio" preload="auto" loop>
+        <source src="../audio/bgm_stagebgm_04_hq.mp3" type="audio/mpeg" />
+      </audio>
+      <audio id="audio-show-quiz" class="audio" preload="auto">
+        <source src="../audio/bgm_coinin_1.mp3" type="audio/mpeg" />
+      </audio>
+      <audio id="audio-game-over" class="audio" preload="auto">
+        <source src="../audio/bgm_gameover_1.mp3" type="audio/mpeg" />
+      </audio>
+      <audio id="audio-timer" class="audio" preload="auto">
+        <source src="../audio/se_te.mp3" type="audio/mpeg" />
+      </audio>
+      <audio id="audio-border-line" class="audio" preload="auto">
+        <source src="../audio/se_pipipi_2.mp3" type="audio/mpeg" />
+      </audio>
+      <audio id="audio-stage-1" class="audio" preload="auto">
+        <source src="../audio/morning_2.mp3" type="audio/mpeg" />
+      </audio>
 </body>
 
 </html>

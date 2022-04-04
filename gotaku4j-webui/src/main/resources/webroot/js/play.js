@@ -117,28 +117,35 @@ function doJadge(_jadge, _selectedItem) {
 	$("#div-prev-explanation").ready(function () {
 		$("#div-prev-explanation img").addClass("img-thumbnail");
 	});
-	const prevChoice = !_selectedItem ? "" : _selectedItem.text().substring(4);
-	$("#div-prev-selection").text(prevChoice);
-	$("#div-jadge").text(_jadge ? "○" : "×");
-	$("#div-jadge").addClass("badge " + (_jadge ? "bg-success" : "bg-danger"));
+
+	const _elapsedTime = Number(TIME_LIMIT - ($("#span-time").text() == "--" ? TIME_LIMIT : $("#span-time").text()));
+	const _score = _jadge ? 1000 - (parseInt(_elapsedTime / 3) * 100) : 0;
+
+	const prevChoice = !_selectedItem ? "未選択" : _selectedItem.text().substring(5);
+	$("#div-prev-selection").text("(" + prevChoice + ")");
+	$("#span-jadge").text(_jadge ? "○" : "×");
+
+	$("#span-jadge").fadeOut(1000).fadeIn(1000);
+	$("#span-jadged-score").text(_score + "点");
+
+	$("#span-jadge").removeClass().addClass("badge " + (_jadge ? "bg-success" : "bg-danger"));
 
 	gameState.quizStatus.push(_jadge ? 1 : 2);
 
-	const restTime = $("#span-time").text() == "--" ? TIME_LIMIT : $("#span-time").text();
 
 	if (_jadge) {
 		gameState.stageCorrectAnswers++;
 		gameState.totalCorrectAnswers++;
-		gameState.totalScore += restTime * 100;
+		gameState.totalScore += _score;
 	}
 
-	websocket.sendAsJsonRpc("QUIZ_RESPONSE", [TIME_LIMIT - restTime, prevChoice, _jadge]);
+	websocket.sendAsJsonRpc("QUIZ_RESPONSE", [_elapsedTime, prevChoice, _jadge]);
 
 
 	updateResultMeter();
 	$("#span-total-score").text(gameState.totalScore);
 	$("#span-total-ratio").text((gameState.totalCorrectAnswers * 100 / gameState.totalQuizNumber).toFixed(1));
-
+	$("#span-total-correct-answer").text(gameState.totalCorrectAnswers);
 	if (BOARDERS[gameState.stageNumber - 1] == 0) {
 		if (_jadge && gameState.stageQuizNumber < STAGE_QUIZ_NUM) {
 			goNextQuiz();
@@ -249,9 +256,7 @@ function sendRecord() {
 	window.removeEventListener('beforeunload', preventMove);
 	$(".audio").each((i, e) => e.pause());
 	document.getElementById("audio-next-stage").play();
-	swalAlert("総得点=" + gameState.totalScore, "成績を記録しました", "success", function () {
-		document.location.reload();
-	}, null, false, 4000);
+	swalAlert("総得点=" + gameState.totalScore, "成績を記録しました", "success", function () {}, null, false, 4000);
 }
 
 function preventMove(e) {

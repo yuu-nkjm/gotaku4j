@@ -83,6 +83,8 @@ class PlayWebSocket {
             sendRecord();
           }, null, false, 4000);
           break;
+        case "RANK_IN":
+          swalAlert("今回の順位は" + json.parameters[0] + "位 です！", "", "success", function () { document.location.reload() }, null, false, 8000);
         default:
           console.error("invalid method name =>" + json.method);
       }
@@ -109,12 +111,12 @@ class PlayWebSocket {
             _tbl.DataTable({
               data: results[i].data,
               columns: [
-                { data: 'BOOKNAME' },
-                { data: 'QID' },
-                { data: 'QUESTION' },
-                { data: 'CHOICE1' },
-                { data: 'SCORE' },
-                { data: 'EXPLANATION' }
+                { data: 'bookName' },
+                { data: 'qid' },
+                { data: 'question' },
+                { data: 'choice1' },
+                { data: 'score' },
+                { data: 'explanation' }
               ],
               pageLength: 1000
             });
@@ -131,7 +133,7 @@ class PlayWebSocket {
         _rankings.forEach(_ranking => {
           const tr = $('<tr>');
           for (let index = 0; index < 6; index++) {
-            tr.append($('<td>').text(_ranking[index]));
+            tr.append($('<td>').html(_ranking[index]));
           }
           $(_selector).append(tr);
         });

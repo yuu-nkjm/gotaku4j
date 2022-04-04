@@ -6,7 +6,7 @@
       <div id="div-book-titles-ui" class="row mb-3">
         <h5>問題集選択</h5>
         <div class="col-12">
-          <div id="btn-group-book-titles" class="btn-group mb-3" role="group">
+          <div id="btn-group-book-titles" class="mb-3">
             <span th:each="name,stat : ${books}"> <input type="radio" class="btn-check" name="options"
                 autocomplete="off" th:id="|option${stat.index}|"> <label
                 class="btn btn-outline-secondary btn-sm label-book-title" th:for="|option${stat.index}|"
@@ -37,6 +37,7 @@
             <tbody id="tbody-score-ranking">
             </tbody>
           </table>
+          <!--
           <h5>正解率ランキング</h5>
           <table class="table">
             <thead>
@@ -52,6 +53,7 @@
             <tbody id="tbody-rate-ranking">
             </tbody>
           </table>
+          -->
         </div>
       </div>
       <div id="div-results" class="row">

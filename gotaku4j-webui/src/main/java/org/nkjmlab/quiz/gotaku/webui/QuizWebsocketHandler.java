@@ -21,6 +21,7 @@ import org.nkjmlab.quiz.gotaku.model.QuizzesTable.Quiz;
 import org.nkjmlab.quiz.gotaku.webui.QuizRecordsTable.QuizRecord;
 import org.nkjmlab.quiz.gotaku.webui.QuizResponsesTable.QuizResponse;
 import org.nkjmlab.util.jackson.JacksonMapper;
+import org.nkjmlab.util.java.collections.ArrayUtils;
 import io.javalin.websocket.WsCloseContext;
 import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsMessageContext;
@@ -85,7 +86,7 @@ public class QuizWebsocketHandler {
             new Object[] {quizzesTable.readGenres(bookName)}));
         sendText(ctx.session,
             new SendJsonMessage(SendJsonMessage.MethodName.RANKING,
-                new Object[] {recordsTable.readScoreRanking(bookName),
+                new Object[] {recordsTable.readScoreRankingObject(bookName),
                     recordsTable.readAccuracyRateRanking(bookName)}));
         sendText(ctx.session, new SendJsonMessage(SendJsonMessage.MethodName.RESULTS,
             new Object[] {readResults(bookName, playerId)}));
@@ -113,13 +114,13 @@ public class QuizWebsocketHandler {
         Object[] ps = json.parameters;
         responsesTable.insert(new QuizResponse(playerId, gameId, stage, qNum, bookName, genre, qid,
             (int) ps[0], (String) ps[1], (boolean) ps[2], LocalDateTime.now()));
-
       }
       case NEXT_QUIZ -> {
         ctx.attribute("q_num", json.parameters[0]);
+        String playerId = ctx.attribute("player_id");
         String bookName = ctx.attribute("book_name");
         List<String> genres = ctx.attribute("genres");
-        Optional<QuizJson> oQuiz = getNextQuiz(ctx, bookName, genres);
+        Optional<QuizJson> oQuiz = getNextQuiz(ctx, playerId, bookName, genres);
 
         oQuiz.ifPresent(quiz -> {
           ctx.attribute("qid", quiz.qid);
@@ -141,8 +142,13 @@ public class QuizWebsocketHandler {
         int stage = ctx.attribute("stage");
         int totalQuizNumber = (int) parameters[0];
         int totalCorrectAnswers = (int) parameters[1];
+        int score = (int) parameters[2];
         recordsTable.insert(new QuizRecord(playerId, gameId, bookName, stage, totalQuizNumber,
-            totalCorrectAnswers, (int) parameters[2], LocalDateTime.now()));
+            totalCorrectAnswers, score, LocalDateTime.now()));
+        int rank = recordsTable.getRank(bookName, score);
+        sendText(ctx.session,
+            new SendJsonMessage(SendJsonMessage.MethodName.RANK_IN, new Object[] {rank}));
+
       }
       default -> {
       }
@@ -150,19 +156,23 @@ public class QuizWebsocketHandler {
 
   }
 
-  private Object readResults(String bookName, String playerId) {
+  private List<Map<String, Object>> readResults(String bookName, String playerId) {
     List<String> genres =
         quizzesTable.readGenres(bookName).stream().map(m -> m.getString("GENRE")).toList();
     return genres.stream().map(genre -> Map.of("genre", genre, "data",
         responsesTable.readPlayerLog(playerId, bookName, genre))).toList();
   }
 
-  private Optional<QuizJson> getNextQuiz(WsMessageContext ctx, String bookName,
+  private Optional<QuizJson> getNextQuiz(WsMessageContext ctx, String playerId, String bookName,
       List<String> genres) {
     log.info("bookName={}", bookName);
     LinkedList<Quiz> repo = ctx.attribute(bookName);
     if (repo == null) {
-      repo = new LinkedList<>(quizzesTable.readBook(bookName, genres));
+      List<String> responses = genres.stream()
+          .flatMap(genre -> responsesTable.readPlayerLog(playerId, bookName, genre).stream())
+          .filter(r -> r.score() < 3).map(r -> r.genre() + r.qid()).toList();
+      repo = new LinkedList<>(quizzesTable.readBook(bookName, genres).stream()
+          .filter(q -> responses.contains(q.genre() + q.qid())).toList());
       ctx.attribute(bookName, repo);
     }
     if (repo.isEmpty()) {
@@ -256,11 +266,7 @@ public class QuizWebsocketHandler {
 
     @Override
     public String toString() {
-      return "[" + method + ", "
-          + (parameters == null ? "null"
-              : Arrays.stream(parameters).map(
-                  o -> o == null ? "null" : o.toString() + "(" + o.getClass().getSimpleName() + ")")
-                  .toList() + "]");
+      return "[" + method + ", " + "[" + ArrayUtils.toStringWithType(parameters) + "]";
     }
 
   }
@@ -269,7 +275,7 @@ public class QuizWebsocketHandler {
   private static class SendJsonMessage {
 
     public enum MethodName {
-      QUIZ, RANKING, GENRES, RESULTS, GAME_CLEAR, RELOAD
+      QUIZ, RANKING, GENRES, RESULTS, GAME_CLEAR, RELOAD, RANK_IN
     }
 
     public MethodName method;

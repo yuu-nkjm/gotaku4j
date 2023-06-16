@@ -44,3 +44,5 @@ players.csv
 /gotaku4j-webui/src/test/resources/quizbooks/5tqcsv
 /gotaku4j-gotakudos-converter/src/main/resources/quizbooks/5tq
 /gotaku4j-gotakudos-converter/src/test/resources/quizbooks/5tq
+/gotaku4j-gotakudos-converter/src/test/resources/quizbooks/5tqcsv/小学校 社会 歴史/*.csv
+/gotaku4j-gotakudos-converter/src/test/resources/quizbooks/5tqcsv/社会/*.csv

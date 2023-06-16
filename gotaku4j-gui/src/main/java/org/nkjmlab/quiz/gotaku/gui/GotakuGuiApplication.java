@@ -17,6 +17,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.apache.logging.log4j.LogManager;
 
+@SuppressWarnings("serial")
 public class GotakuGuiApplication extends JFrame {
   private static final org.apache.logging.log4j.Logger log = LogManager.getLogger();
 

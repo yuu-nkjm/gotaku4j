@@ -71,8 +71,8 @@ public class GotakuCsvConverter {
   }
 
 
-  private static final String IMG_SRC_REGEX =
-      "https?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+//  private static final String IMG_SRC_REGEX =
+//      "https?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
 
   static String convertImageUrlToImageTag(String text) {
     if (text == null) {

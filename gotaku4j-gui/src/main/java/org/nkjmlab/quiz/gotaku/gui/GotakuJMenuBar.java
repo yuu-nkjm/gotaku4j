@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.nkjmlab.util.java.KeyEventUtils;
 
 
+@SuppressWarnings("serial")
 public class GotakuJMenuBar extends JMenuBar {
   private static final org.apache.logging.log4j.Logger log = LogManager.getLogger();
 

@@ -11,16 +11,16 @@ import org.nkjmlab.quiz.gotaku.converter.GotakuCsvConverter;
 import org.nkjmlab.quiz.gotaku.converter.GotakuFileConverter;
 import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuizBook;
 import org.nkjmlab.quiz.gotaku.model.QuizzesTable;
-import org.nkjmlab.util.h2.H2LocalDataSourceFactory;
-import org.nkjmlab.util.h2.H2ServerUtils;
+import org.nkjmlab.sorm4j.util.h2.datasource.H2LocalDataSourceFactory;
+import org.nkjmlab.sorm4j.util.h2.server.H2TcpServerProcess;
+import org.nkjmlab.sorm4j.util.h2.server.H2TcpServerProperties;
 import org.nkjmlab.util.jackson.JacksonMapper;
 import org.nkjmlab.util.java.function.Try;
-import org.nkjmlab.util.java.json.FileDatabaseConfigJson;
 import org.nkjmlab.util.java.lang.ProcessUtils;
 import org.nkjmlab.util.java.lang.ResourceUtils;
-import org.nkjmlab.util.javax.servlet.ViewModel;
-import org.nkjmlab.util.javax.servlet.ViewModel.Builder;
-import org.nkjmlab.util.thymeleaf.TemplateEngineBuilder;
+import org.nkjmlab.util.java.web.ViewModel;
+import org.nkjmlab.util.java.web.ViewModel.Builder;
+import org.nkjmlab.util.thymeleaf.ThymeleafTemplateEnginBuilder;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
@@ -42,19 +42,18 @@ public class GotakuApplication {
 
 
   public static void main(String[] args) {
-    H2ServerUtils.startDefaultTcpServerProcessAndWaitFor();
-    H2ServerUtils.startDefaultWebConsoleServerProcessAndWaitFor();
     int port = args.length == 0 ? 7890 : Integer.valueOf(args[0]);
     ProcessUtils.stopProcessBindingPortIfExists(port);
+    new H2TcpServerProcess(H2TcpServerProperties.builder().build()).awaitStart();
     new GotakuApplication().start(port);
   }
 
   public GotakuApplication() {
-    FileDatabaseConfigJson conf = JacksonMapper.getDefaultMapper()
-        .toObject(ResourceUtils.getResourceAsFile("/h2.conf"), FileDatabaseConfigJson.Builder.class)
-        .build();
-    H2LocalDataSourceFactory factory = H2LocalDataSourceFactory.builder(conf).build();
-    log.info("{}, factory=[{}]", conf, factory);
+    H2LocalDataSourceFactory factory =
+        JacksonMapper.getDefaultMapper().toObject(ResourceUtils.getResourceAsFile("/h2.conf"),
+            H2LocalDataSourceFactory.Builder.class).build();
+
+    log.info("factory=[{}]", factory);
     this.dataSource = factory.createServerModeDataSource();
     this.quizzesTable = new QuizzesTable(dataSource);
     this.app = createJavalin();
@@ -62,7 +61,7 @@ public class GotakuApplication {
 
   private Javalin createJavalin() {
 
-    JavalinThymeleaf.configure(new TemplateEngineBuilder().setPrefix("/templates/")
+    JavalinThymeleaf.configure(ThymeleafTemplateEnginBuilder.builder()
         .setTtlMs(THYMELEAF_EXPIRE_TIME_MILLI_SECOND).build());
 
     Javalin app = Javalin.create(config -> {
@@ -106,7 +105,7 @@ public class GotakuApplication {
 
 
       model.put("books", quizzesTable.getBookNames());
-      ctx.render(pageName, model.build().getMap());
+      ctx.render(pageName, model.build());
     });
 
     return app;

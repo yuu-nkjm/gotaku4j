@@ -1,7 +1,7 @@
 package org.nkjmlab.quiz.gotaku;
 
 import java.util.Scanner;
-import org.nkjmlab.quiz.gotaku.gotakudos.GotakuFileConverter;
+import org.nkjmlab.quiz.gotaku.converter.GotakuFileConverter;
 import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuiz;
 import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuizBook;
 import org.nkjmlab.quiz.gotaku.gotakudos.QuizResource;
@@ -14,7 +14,7 @@ public class GotakuCui {
   public static void main(String[] args) {
     GotakuCui gotakuCui = new GotakuCui();
     GotakuQuizBook gotakuQuizBook =
-        new GotakuFileConverter().parse(ResourceUtils.getFile("/quizbooks/5tq/正統派クイズ2000題"));
+        new GotakuFileConverter().parse(ResourceUtils.getResourceAsFile("/quizbooks/5tq/正統派クイズ2000題"));
     gotakuCui.startGame(gotakuQuizBook);
 
   }

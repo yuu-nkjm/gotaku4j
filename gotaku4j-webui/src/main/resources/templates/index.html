@@ -2,69 +2,96 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="ja">
 
 <head>
-<object th:include="/fragments/head.html::meta-fragment" th:remove="tag"></object>
-<title>ごたく</title>
+  <object th:insert="~{/fragments/head.html::meta-fragment}" th:remove="tag"></object>
+  <title>ごたく</title>
 </head>
 
 <body>
   <div class="container">
     <div class="row bg-dark my-3 p-1">
       <div class="col-12">
-        <div class="float-right text-right">
-          <button class="btn btn-primary btn-sm text-white" id="btn-start-game">スタートメニュー</button>
+        <div class="text-end text-white">
+          <span id="span-player"></span> <button id="btn-start-menu" class="btn btn-primary btn-sm">スタートメニュー </button>
         </div>
       </div>
     </div>
-    <div id="div-start-ui" class="row" style="display: none">
-      <div class="col-12">
-        <div id="div-book-titles-ui" class="row mb-3">
-          <div class="col-12">
-            <div id="btn-group-book-titles" class=""></div>
-          </div>
-        </div>
-        <div th:include="/fragments/table-ranking.html::fcontent" th:remove="tag"></div>
-      </div>
-    </div>
+    <div th:insert="~{/fragments/player-select.html::fcontent}" th:remove="tag"></div>
+    <div th:insert="~{/fragments/book-select.html::fcontent}" th:remove="tag"></div>
     <div id="div-play-ui" class="row" style="display: none">
-      <div class="col-md-7 mincho">
+      <div class="col-md-7">
         <div class="card card-default">
           <div class="card-header h5 text-center">
             第<span id="span-stage-quiz-number">0</span>問
           </div>
           <div class="card-body">
-            <p id="div-question" class="h3"></p>
+            <p id="div-question" class="h4"></p>
           </div>
         </div>
-        <div class="card border-white">
-          <button id="btn-s-0" data-selection=0
-            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="0" disabled></button>
-          <button id="btn-s-1" data-selection=1
-            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="1" disabled></button>
-          <button id="btn-s-2" data-selection=2
-            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="2" disabled></button>
-          <button id="btn-s-3" data-selection=3
-            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="3" disabled></button>
-          <button id="btn-s-4" data-selection=4
-            class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="4" disabled></button>
+        <div class="card border-white div-selections">
+          <button id="btn-s-0" data-selection=0 class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="0"
+            disabled></button>
+          <button id="btn-s-1" data-selection=1 class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="1"
+            disabled></button>
+          <button id="btn-s-2" data-selection=2 class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="2"
+            disabled></button>
+          <button id="btn-s-3" data-selection=3 class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="3"
+            disabled></button>
+          <button id="btn-s-4" data-selection=4 class="btn btn-outline-dark btn-lg btn-selection m-2" tabindex="4"
+            disabled></button>
         </div>
       </div>
       <div class="col-md-5">
         <div class="card card-default mb-3">
           <div class="card-body">
             <div class="row">
-              <div class="col-12">
+              <div class="col-3">
                 <h6>
-                  <span id="span-book-title">1</span>
+                  <span class="badge bg-info">問題集</span>
                 </h6>
+              </div>
+              <div class="col-9">
                 <h6>
-                  ステージ <span id="span-stage-number">1</span>: <span id="span-border-number">4</span>問
-                  正解で合格
+                  <span id="span-book-title"></span>
                 </h6>
-
               </div>
             </div>
-            <div class="row mt-2">
+            <div class="row">
+              <div class="col-3">
+                <h6>
+                  <span class="badge bg-info">ジャンル</span>
+                </h6>
+              </div>
+              <div class="col-9">
+                <h6>
+                  <span id="span-active-genres"></span>
+                </h6>
+              </div>
+            </div>
+            <div class="row">
               <div class="col-12">
+                <hr>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <h6>
+                  <span class="badge bg-primary">ステージ <span id="span-stage-number">0</span></span>
+                </h6>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+              </div>
+              <div class="col-9">
+                <h6>
+                  <span id="span-border-number">0</span>問 正解で合格
+                </h6>
+              </div>
+            </div>
+            <div class="row my-2">
+              <div class="col-3">
+              </div>
+              <div class="col-9">
                 <div class="h4">
                   <div id="div-border-line">
                     <span id="span-border-line-indicator" class="text-warning">▼</span>
@@ -74,11 +101,21 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-4">
-                <h6>得点</h6>
-                <h6>正答率</h6>
+              <div class="col-3">
+                <h6>
+                  <span class="badge bg-success">正答数</span>
+                </h6>
+                <h6>
+                  <span class="badge bg-primary">得点</span>
+                </h6>
+                <h6>
+                  <span class="badge bg-primary">正答率</span>
+                </h6>
               </div>
-              <div class="col-8">
+              <div class="col-9">
+                <h6>
+                  <span id="span-total-correct-answer" class="text-success">0</span>問
+                </h6>
                 <h6>
                   <span id="span-total-score" class="text-primary">0</span>点
                 </h6>
@@ -89,47 +126,88 @@
             </div>
           </div>
         </div>
-        <div class="card card-default">
+        <div class="card card-default mb-2">
           <div class="card-body">
-            <p>
-              <span id="div-prev-question"></span> <span id="div-jadge"></span>
-            </p>
-            <p>
-              <span id="div-prev-answer"></span>
-            </p>
+            <div class="row">
+              <div class="col-2">
+                <p>
+                  <span class="badge bg-secondary">問題</span>
+                </p>
+              </div>
+              <div class="col-10">
+                <p><span id="div-prev-question"></span></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-2">
+                <p>
+                  <span class="badge bg-success">正解</span>
+                </p>
+              </div>
+              <div class="col-10">
+                <p>
+                  <span id="div-prev-answer"></span>
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-2">
+                <span id="span-jadge"></span>
+              </div>
+              <div class="col-10">
+                <p>
+                  <span id="span-jadged-score"></span> <span id="div-prev-selection" class="text-muted small"></span>
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-2">
+                <p>
+                  <span class="badge bg-secondary">補足</span>
+                </p>
+              </div>
+              <div class="col-10">
+                <p>
+                  <span id="div-prev-explanation"></span>
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="text-right">
-          残り<span id="span-time" class="badge badge-secondary"></span>秒
+        <div>
+          残り<span id="span-time" class="badge bg-secondary"></span>秒
+        </div>
+        <div class="text-end">
+          <button id="btn-finish-game" class="btn btn-danger btn-sm">終了</button>
         </div>
       </div>
     </div>
   </div>
-  <audio id="audio-ok" preload="auto">
+  <audio id="audio-ok" class="audio" preload="auto">
     <source src="../audio/se_quizright_1.mp3" type="audio/mpeg" />
   </audio>
-  <audio id="audio-ng" preload="auto">
+  <audio id="audio-ng" class="audio" preload="auto">
     <source src="../audio/se_quizmistake_1.mp3" type="audio/mpeg" />
   </audio>
-  <audio id="audio-next-stage" preload="auto">
+  <audio id="audio-next-stage" class="audio" preload="auto">
     <source src="../audio/arasuji_13.mp3" type="audio/mpeg" />
   </audio>
-  <audio id="audio-select-book" preload="auto" loop>
+  <audio id="audio-select-book" class="audio" preload="auto" loop>
     <source src="../audio/bgm_stagebgm_04_hq.mp3" type="audio/mpeg" />
   </audio>
-  <audio id="audio-show-quiz" preload="auto">
+  <audio id="audio-show-quiz" class="audio" preload="auto">
     <source src="../audio/bgm_coinin_1.mp3" type="audio/mpeg" />
   </audio>
-  <audio id="audio-game-over" preload="auto">
+  <audio id="audio-game-over" class="audio" preload="auto">
     <source src="../audio/bgm_gameover_1.mp3" type="audio/mpeg" />
   </audio>
-  <audio id="audio-timer" preload="auto">
+  <audio id="audio-timer" class="audio" preload="auto">
     <source src="../audio/se_te.mp3" type="audio/mpeg" />
   </audio>
-  <audio id="audio-border-line" preload="auto">
+  <audio id="audio-border-line" class="audio" preload="auto">
     <source src="../audio/se_pipipi_2.mp3" type="audio/mpeg" />
   </audio>
-  <audio id="audio-stage-1" preload="auto">
+  <audio id="audio-stage-1" class="audio" preload="auto">
     <source src="../audio/morning_2.mp3" type="audio/mpeg" />
   </audio>
 </body>

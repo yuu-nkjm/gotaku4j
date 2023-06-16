@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="ja">
+<div th:fragment="fcontent">
+  <div id="div-player-select" class="row" style="display: none">
+    <div class="col-12">
+      <h5>プレーヤ選択</h5>
+      <div id="div-players" class="list-group list-group-horizontal">
+        <button th:each="name : ${players}" th:text="${name}"
+          class="list-group-item list-group-item-info btn-player"></button>
+      </div>
+      <hr>
+      <div class="text-end">
+        <button id="btn-reload-books" class="btn bg-light">問題集の再読み込み</button>
+      </div>
+    </div>
+  </div>
+</div>

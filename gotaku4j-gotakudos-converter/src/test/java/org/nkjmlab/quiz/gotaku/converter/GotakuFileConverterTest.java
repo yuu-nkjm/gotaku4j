@@ -1,24 +1,25 @@
-package org.nkjmlab.quiz.gotaku.gotakudos;
+package org.nkjmlab.quiz.gotaku.converter;
 
 import static org.assertj.core.api.Assertions.*;
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
+import org.nkjmlab.quiz.gotaku.gotakudos.GotakuQuizBook;
 import org.nkjmlab.util.java.lang.ResourceUtils;
 
 class GotakuFileConverterTest {
 
   @Test
   void testParseAll() {
-    File _5tqsDir = ResourceUtils.getFile("/quizbooks/5tq");
+    File _5tqsDir = ResourceUtils.getResourceAsFile("/quizbooks/5tq");
     new GotakuFileConverter().parseAll(_5tqsDir);
   }
 
   @Test
   void testConvertToFile() {
-    File _5tq = ResourceUtils.getFile("/quizbooks/5tq/中学校理科編(99年度3年生用)/RIKA3NEN.5TQ");
-    File outputFile = ResourceUtils.getFile("/quizbooks/5tq/中学校理科編(99年度3年生用)/");
+    File _5tq = ResourceUtils.getResourceAsFile("/quizbooks/5tq/中学校理科編(99年度3年生用)");
+    File outputFile = ResourceUtils.getResourceAsFile("/quizbooks/5tq/中学校理科編(99年度3年生用)/");
 
     new GotakuFileConverter().convertToTextFile(_5tq, outputFile);
 
@@ -26,7 +27,7 @@ class GotakuFileConverterTest {
 
   @Test
   void testParseFile() {
-    File _5tqDir = ResourceUtils.getFile("/quizbooks/5tq/正統派クイズ2000題");
+    File _5tqDir = ResourceUtils.getResourceAsFile("/quizbooks/5tq/正統派クイズ2000題");
     GotakuQuizBook book = new GotakuFileConverter().parse(_5tqDir);
 
     assertThat(book.getBookName()).isEqualTo("正統派クイズ2000題");

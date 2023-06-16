@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="ja">
+<div th:fragment="fcontent">
+  <div id="div-book-select" class="row" style="display: none">
+    <div class="col-12">
+      <div id="div-book-titles-ui" class="row mb-3">
+        <h5>問題集選択</h5>
+        <div class="col-12">
+          <div id="btn-group-book-titles" class="mb-3">
+            <span th:each="name,stat : ${books}"> <input type="radio" class="btn-check" name="options"
+                autocomplete="off" th:id="|option${stat.index}|"> <label
+                class="btn btn-outline-secondary btn-sm label-book-title" th:for="|option${stat.index}|"
+                th:text="${name}"></label></span>
+          </div>
+          <h5>出題ジャンル</h5>
+          <div id="div-ganres" class="mb-2"></div>
+          <div>
+            <button id="btn-start-game" class="btn btn-success btn-sm" disabled>ゲームをはじめる</button>
+          </div>
+        </div>
+      </div>
+      <div id="div-ranking" class="row">
+        <div class="col-12">
+          <hr>
+          <h5>得点ランキング</h5>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">順位</th>
+                <th scope="col">名前</th>
+                <th scope="col">得点</th>
+                <th scope="col">正解率</th>
+                <th scope="col">ステージ</th>
+                <th scope="col">日付</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-score-ranking">
+            </tbody>
+          </table>
+          <!--
+          <h5>正解率ランキング</h5>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">順位</th>
+                <th scope="col">名前</th>
+                <th scope="col">得点</th>
+                <th scope="col">正解率</th>
+                <th scope="col">ステージ</th>
+                <th scope="col">日付</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-rate-ranking">
+            </tbody>
+          </table>
+          -->
+        </div>
+      </div>
+      <div id="div-results" class="row">
+        <div class="col-12">
+          <h5>回答の記録</h5>
+          <div id="div-tbl-results"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

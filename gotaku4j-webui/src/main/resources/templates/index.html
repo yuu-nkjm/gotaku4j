@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="ja">
 
 <head>
-  <object th:include="/fragments/head.html::meta-fragment" th:remove="tag"></object>
+  <object th:insert="~{/fragments/head.html::meta-fragment}" th:remove="tag"></object>
   <title>ごたく</title>
 </head>
 
@@ -15,8 +15,8 @@
         </div>
       </div>
     </div>
-    <div th:include="/fragments/player-select.html::fcontent" th:remove="tag"></div>
-    <div th:include="/fragments/book-select.html::fcontent" th:remove="tag"></div>
+    <div th:insert="~{/fragments/player-select.html::fcontent}" th:remove="tag"></div>
+    <div th:insert="~{/fragments/book-select.html::fcontent}" th:remove="tag"></div>
     <div id="div-play-ui" class="row" style="display: none">
       <div class="col-md-7">
         <div class="card card-default">

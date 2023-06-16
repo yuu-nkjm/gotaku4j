@@ -70,14 +70,13 @@ public class QuizRecordsTable extends BasicH2Table<QuizRecord> {
     }
     return ret;
   }
-
   private String getPrefix(int rank) {
     return switch (rank) {
-      case 1 -> "<i class='bi bi-twitter'></i> 正一位";
-      case 2 -> "<i class='bi bi-trophy-fill'></i> 従一位";
-      case 3 -> "<i class='bi bi-trophy'></i> 正二位";
-      case 4 -> "<i class='bi bi-sun-fill'></i> 従二位";
-      case 5 -> "<i class='bi bi-sun'></i> 正三位";
+      case 1 -> "<i class='fa-solid fa-trophy'></i> 正一位";
+      case 2 -> "<i class='fa-solid fa-medal'></i> 従一位";
+      case 3 -> "<i class='fa-solid fa-award'></i> 正二位";
+      case 4 -> "<i class='fa-solid fa-cookie'></i> 従二位";
+      case 5 -> "<i class='fa-solid fa-star'></i> 正三位";
       default -> "";
     };
 
